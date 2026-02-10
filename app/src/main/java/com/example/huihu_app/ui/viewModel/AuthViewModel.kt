@@ -25,7 +25,7 @@ class AuthViewModel(
 
     fun login(userName: String, password: String) {
         _uiState.update {
-            it.copy(isLoading =  true)
+            it.copy(isLoading =  true, error = null)
         }
         viewModelScope.launch {
             val res = authRepository.login(userName,password)
@@ -38,6 +38,25 @@ class AuthViewModel(
             }
             _uiState.update {
                 it.copy(isLoading =  false)
+            }
+        }
+    }
+
+    fun register(email: String, userName: String, password: String) {
+        _uiState.update {
+            it.copy(isLoading = true, error = null)
+        }
+        viewModelScope.launch {
+            val res = authRepository.register(email, userName, password)
+            if (res.isSuccess()) {
+                localStoreRepository.saveCurrentUser(res.data!!)
+            } else {
+                _uiState.update {
+                    it.copy(error = res.message)
+                }
+            }
+            _uiState.update {
+                it.copy(isLoading = false)
             }
         }
     }

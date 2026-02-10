@@ -9,23 +9,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huihu_app.ui.AppViewModelProvider
-import com.example.huihu_app.ui.components.LoginForm
+import com.example.huihu_app.ui.components.RegisterForm
 import com.example.huihu_app.ui.viewModel.AuthViewModel
 
 @Composable
-fun LoginScreen(
-    onRegister: () -> Unit,
+fun RegisterScreen(
+    onLogin: () -> Unit,
     viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Scaffold() {paddingValues ->
+    Scaffold() { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
-            LoginForm(
+            RegisterForm(
                 uiState = uiState,
-                onLogin = { username, password ->
-                    viewModel.login(username, password)
+                onRegister = { email, username, password ->
+                    viewModel.register(email, username, password)
                 },
-                onRegister = onRegister
+                onLogin = onLogin
             )
         }
     }

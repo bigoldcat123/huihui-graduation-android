@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.huihu_app.MainApp
 import com.example.huihu_app.ui.viewModel.AppViewModel
 import com.example.huihu_app.ui.viewModel.AuthViewModel
+import com.example.huihu_app.ui.viewModel.HomeViewModel
 
 class AppViewModelProvider {
     companion object {
@@ -15,6 +16,9 @@ class AppViewModelProvider {
                 AppViewModel(
                     container().localStoreRepository
                 )
+            }
+            initializer {
+                HomeViewModel(container().localStoreRepository)
             }
             initializer {
                 AuthViewModel(

@@ -3,4 +3,4 @@ package com.example.huihu_app.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CurrentUser(val id: Int)
+data class CurrentUser(val id: Int, val name: String, val email: String)

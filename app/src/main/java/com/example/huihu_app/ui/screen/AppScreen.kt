@@ -1,25 +1,32 @@
 package com.example.huihu_app.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.huihu_app.Nav
+import com.example.huihu_app.data.model.CurrentUser
 import com.example.huihu_app.state.AuthState
 import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.viewModel.AppViewModel
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider.FACTORY)) {
     val authState by viewModel.authState.collectAsStateWithLifecycle(Nav.Splash)
 
     val backStack = rememberNavBackStack()
+    var currentUser by rememberSaveable { mutableStateOf<CurrentUser?>(null) }
 
     LaunchedEffect(authState) {
         backStack.clear()
@@ -31,6 +38,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                 backStack.add(Nav.Login)
             }
             is AuthState.Authenticated -> {
+                currentUser = (authState as AuthState.Authenticated).currentUser
                 backStack.add(Nav.Home)
             }
         }
@@ -41,11 +49,23 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
             backStack = backStack,
             entryProvider = entryProvider {
                 entry<Nav.Login>() {
-                    LoginScreen()
+                    LoginScreen(
+                        onRegister = { backStack.add(Nav.Register) }
+                    )
+                }
+                entry<Nav.Register>() {
+                    RegisterScreen(
+                        onLogin = {
+                            if (backStack.size > 1) {
+                                backStack.removeLast()
+                            } else {
+                                backStack.add(Nav.Login)
+                            }
+                        }
+                    )
                 }
                 entry<Nav.Home>() {
-                    (authState as AuthState.Authenticated).currentUser
-                    HomeScreen((authState as AuthState.Authenticated).currentUser)
+                    HomeScreen(currentUser!!)
                 }
                 entry<Nav.Splash>() {
                     SplashScreen()
