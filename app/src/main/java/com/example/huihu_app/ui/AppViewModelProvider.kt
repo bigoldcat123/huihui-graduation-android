@@ -8,6 +8,7 @@ import com.example.huihu_app.MainApp
 import com.example.huihu_app.ui.viewModel.AppViewModel
 import com.example.huihu_app.ui.viewModel.AuthViewModel
 import com.example.huihu_app.ui.viewModel.HomeViewModel
+import com.example.huihu_app.ui.viewModel.NewPersonViewModel
 
 class AppViewModelProvider {
     companion object {
@@ -23,6 +24,12 @@ class AppViewModelProvider {
             initializer {
                 AuthViewModel(
                     container().authRepository,
+                    container().localStoreRepository
+                )
+            }
+            initializer {
+                NewPersonViewModel(
+                    container().foodRepository,
                     container().localStoreRepository
                 )
             }

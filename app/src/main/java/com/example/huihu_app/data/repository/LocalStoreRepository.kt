@@ -44,4 +44,10 @@ class LocalStoreRepository(context: Context) {
             it.remove(IS_NEW_USER)
         }
     }
+
+    suspend fun markOnboardingCompleted() {
+        dataStore.edit {
+            it[IS_NEW_USER] = false
+        }
+    }
 }
