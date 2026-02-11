@@ -7,8 +7,6 @@
 ## Endpoints
 
 ### GET /
-Returns a simple string.
-
 Request
 - Method: `GET`
 - Path: `/`
@@ -21,8 +19,6 @@ Response
 ---
 
 ### POST /auth/login
-Login with username and password.
-
 Request
 - Method: `POST`
 - Path: `/auth/login`
@@ -60,8 +56,6 @@ Response (error)
 ---
 
 ### POST /auth/register
-Register a new user.
-
 Request
 - Method: `POST`
 - Path: `/auth/register`
@@ -100,13 +94,11 @@ Response (error)
 ---
 
 ### GET /auth/me
-Fetch current user using an auth token.
-
 Request
 - Method: `GET`
 - Path: `/auth/me`
 - Headers:
-  - `Authorization: Bearer <jwt>`
+- `Authorization: Bearer <jwt>`
 - Body: none
 
 Response (success)
@@ -134,8 +126,52 @@ Response (error)
 }
 ```
 
+---
+
+### POST /food/consecutiveSuggest
+Request
+- Method: `POST`
+- Path: `/food/consecutiveSuggest`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "food_ids": [1, 2, 3, 4],
+  "selected_food_ids": [1, 2]
+}
+```
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 10,
+      "restaurant_id": 2,
+      "name": "Spicy Chicken",
+      "description": "...",
+      "image": "https://..."
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...)"
+}
+```
+
 ## Notes
-- The API wraps all responses in `ApiResponse`.
-- Errors are returned with `code=500` inside the JSON body (HTTP status remains 200).
-- `name` in `CurrentUser` is mapped from the stored `username`.
-- JWTs are signed with `JWT_SECRET` (defaults to `dev-secret-change-me` if unset) and expire in 24 hours.
+- The API wraps responses in `ApiResponse`.
+- Errors use `code=500` in JSON while HTTP status remains `200`.
+- JWTs use `JWT_SECRET` (fallback: `dev-secret-change-me`) and expire in 24 hours.
