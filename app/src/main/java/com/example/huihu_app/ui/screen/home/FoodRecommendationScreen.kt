@@ -22,6 +22,7 @@ import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.components.FoodLoadingCard
 import com.example.huihu_app.ui.components.TodayFoodActionBar
 import com.example.huihu_app.ui.components.TodayFoodCard
+import com.example.huihu_app.ui.components.TodayFoodNextAction
 import com.example.huihu_app.ui.viewModel.FoodRecommendationViewModel
 
 @Composable
@@ -85,19 +86,28 @@ fun FoodRecommendationScreen(
 
                 else -> {
                     val currentFood = uiState.cards.first()
+                    val isAccepted = uiState.acceptedFoodId == currentFood.id
                     TodayFoodCard(
                         food = currentFood,
-                        isCelebrating = uiState.acceptedFoodId == currentFood.id,
+                        isCelebrating = isAccepted,
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    TodayFoodActionBar(
-                        onThatsIt = { viewModel.onThatsIt() },
-                        onChangeIt = { viewModel.onChangeIt() },
-                        onDontLikeIt = { viewModel.onDontLikeIt() },
-                        enabled = !uiState.isLoading,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if (isAccepted) {
+                        TodayFoodNextAction(
+                            onNextFood = { viewModel.nextFood() },
+                            enabled = !uiState.isLoading,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        TodayFoodActionBar(
+                            onThatsIt = { viewModel.onThatsIt() },
+                            onChangeIt = { viewModel.onChangeIt() },
+                            onDontLikeIt = { viewModel.onDontLikeIt() },
+                            enabled = !uiState.isLoading,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
 

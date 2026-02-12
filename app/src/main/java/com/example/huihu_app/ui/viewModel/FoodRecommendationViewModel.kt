@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.huihu_app.data.model.Food
 import com.example.huihu_app.data.model.FoodReactionRequest
 import com.example.huihu_app.data.repository.FoodRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,10 +25,6 @@ class FoodRecommendationViewModel(
 
     private val _uiState = MutableStateFlow(FoodRecommendationUiState())
     val uiState = _uiState.asStateFlow()
-
-    companion object {
-        private const val MAX_REACTION_RETRY = 3
-    }
 
     private var authToken: String? = null
     private var hasLoaded = false
@@ -105,6 +100,13 @@ class FoodRecommendationViewModel(
                 feedbackMessage = "Noted. We will refine your recommendations."
             )
         }
+    }
+
+    fun nextFood() {
+        _uiState.update {
+            it.copy(acceptedFoodId = null, feedbackMessage = null)
+        }
+        fetchRecommendation()
     }
 
     private fun fetchRecommendation() {

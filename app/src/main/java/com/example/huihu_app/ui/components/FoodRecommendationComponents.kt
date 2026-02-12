@@ -312,3 +312,18 @@ fun TodayFoodActionBar(
         }
     }
 }
+
+@Composable
+fun TodayFoodNextAction(
+    onNextFood: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onNextFood,
+        enabled = enabled,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text("Next Food")
+    }
+}
