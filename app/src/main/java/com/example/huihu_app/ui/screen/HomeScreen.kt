@@ -7,11 +7,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import com.example.huihu_app.ui.screen.home.MineScreen
 import com.example.huihu_app.ui.viewModel.HomeViewModel
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
     token: String,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
@@ -32,6 +35,19 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        when (uiState.selectedTab) {
+                            0 -> "Forum"
+                            1 -> "Today's Food!"
+                            else -> "Mine"
+                        }
+                    )
+                }
+            )
+        },
         bottomBar = {
             HomeBottomBar(
                 selectedTab = uiState.selectedTab,
