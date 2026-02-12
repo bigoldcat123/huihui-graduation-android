@@ -5,12 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.huihu_app.data.model.Food
 import com.example.huihu_app.data.model.FoodReactionRequest
 import com.example.huihu_app.data.repository.FoodRepository
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 data class FoodRecommendationUiState(
@@ -27,10 +25,12 @@ class FoodRecommendationViewModel(
     private val _uiState = MutableStateFlow(FoodRecommendationUiState())
     val uiState = _uiState.asStateFlow()
 
+    companion object {
+        private const val MAX_REACTION_RETRY = 3
+    }
+
     private var authToken: String? = null
     private var hasLoaded = false
-    private val reactionQueue = ArrayDeque<FoodReactionRequest>()
-    private var reactionWorker: Job? = null
 
     fun load(token: String, force: Boolean = false) {
         if (authToken == null) {
@@ -98,7 +98,7 @@ class FoodRecommendationViewModel(
     private fun consumeTopCard(reaction: String) {
         val topCard = _uiState.value.cards.firstOrNull() ?: return
 
-        enqueueReaction(
+        sendReactionAsync(
             FoodReactionRequest(
                 food_id = topCard.id,
                 reaction = reaction,
@@ -116,21 +116,21 @@ class FoodRecommendationViewModel(
         }
     }
 
-    private fun enqueueReaction(request: FoodReactionRequest) {
-        reactionQueue.addLast(request)
+    private fun sendReactionAsync(request: FoodReactionRequest) {
         _uiState.update {
-            it.copy(pendingReactionCount = reactionQueue.size)
+            it.copy(pendingReactionCount = it.pendingReactionCount + 1)
         }
-        processReactionQueue()
-    }
 
-    private fun processReactionQueue() {
-        if (reactionWorker?.isActive == true) return
+        viewModelScope.launch {
+            val token = authToken
+            if (token == null) {
+                _uiState.update {
+                    it.copy(pendingReactionCount = (it.pendingReactionCount - 1).coerceAtLeast(0))
+                }
+                return@launch
+            }
 
-        reactionWorker = viewModelScope.launch {
-            while (isActive && reactionQueue.isNotEmpty()) {
-                val token = authToken ?: break
-                val request = reactionQueue.first()
+//            repeat(MAX_REACTION_RETRY) { attempt ->
                 val response = foodRepository.reaction(
                     token = token,
                     foodId = request.food_id,
@@ -139,14 +139,21 @@ class FoodRecommendationViewModel(
                     occurredAt = request.occurred_at
                 )
                 if (response.isSuccess()) {
-                    reactionQueue.removeFirst()
                     _uiState.update {
-                        it.copy(pendingReactionCount = reactionQueue.size)
+                        it.copy(pendingReactionCount = (it.pendingReactionCount - 1).coerceAtLeast(0))
                     }
-                } else {
-                    delay(2000)
+                    return@launch
                 }
-            }
+//                if (attempt < MAX_REACTION_RETRY - 1) {
+//                    delay(2000)
+//                }
+//            }
+//            _uiState.update {
+//                it.copy(
+//                    pendingReactionCount = (it.pendingReactionCount - 1).coerceAtLeast(0),
+//                    error = "Some feedback was not synced. Please continue."
+//                )
+//            }
         }
     }
 }
