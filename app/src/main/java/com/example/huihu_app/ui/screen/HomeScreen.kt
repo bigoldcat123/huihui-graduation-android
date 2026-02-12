@@ -48,7 +48,7 @@ fun HomeScreen(
             when (uiState.selectedTab) {
                 0 -> ForumScreen()
                 1 -> FoodRecommendationScreen(token = token)
-                else -> MineScreen()
+                else -> MineScreen(onLogout = viewModel::logout)
             }
         }
     }
