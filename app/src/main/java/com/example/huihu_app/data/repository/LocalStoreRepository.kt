@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.huihu_app.state.AuthState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
@@ -19,6 +20,7 @@ class LocalStoreRepository(context: Context) {
     companion object {
         val AUTH_TOKEN = stringPreferencesKey("auth_token")
         val IS_NEW_USER = booleanPreferencesKey("is_new_user")
+        val OPEN_FOOD_TAB_ONCE = booleanPreferencesKey("open_food_tab_once")
     }
 
     val authState = dataStore.data.map {
@@ -36,18 +38,31 @@ class LocalStoreRepository(context: Context) {
         dataStore.edit {
             it[AUTH_TOKEN] = token
             it[IS_NEW_USER] = isNewUser
+            it[OPEN_FOOD_TAB_ONCE] = false
         }
     }
     suspend fun logout() {
         dataStore.edit {
             it.remove(AUTH_TOKEN)
             it.remove(IS_NEW_USER)
+            it.remove(OPEN_FOOD_TAB_ONCE)
         }
     }
 
     suspend fun markOnboardingCompleted() {
         dataStore.edit {
             it[IS_NEW_USER] = false
+            it[OPEN_FOOD_TAB_ONCE] = true
         }
+    }
+
+    suspend fun consumeOpenFoodTabOnce(): Boolean {
+        val shouldOpen = dataStore.data.first()[OPEN_FOOD_TAB_ONCE] ?: false
+        if (shouldOpen) {
+            dataStore.edit {
+                it[OPEN_FOOD_TAB_ONCE] = false
+            }
+        }
+        return shouldOpen
     }
 }

@@ -14,10 +14,7 @@ data class NewPersonUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val currentRound: Int = 0,
-    val foods: List<Food> = emptyList(),
-    val selectedCurrentRound: Set<Int> = emptySet(),
-    val allReceivedFoodIds: Set<Int> = emptySet(),
-    val allSelectedFoodIds: Set<Int> = emptySet(),
+    val cards: List<Food> = emptyList(),
     val isCompleted: Boolean = false
 )
 
@@ -34,87 +31,113 @@ class NewPersonViewModel(
     val uiState = _uiState.asStateFlow()
 
     private var authToken: String? = null
+    private var activeRound: Int = 0
+    private val allReceivedFoodIds = linkedSetOf<Int>()
+    private val allSelectedFoodIds = linkedSetOf<Int>()
     private var lastFoodIds: List<Int> = emptyList()
-    private var lastSelectedIds: List<Int> = emptyList()
+    private var lastSelectedFoodIds: List<Int> = emptyList()
 
     fun start(token: String) {
         if (authToken != null) return
         authToken = token
-        fetchConsecutiveSuggest(foodIds = emptyList(), selectedFoodIds = emptyList())
+        requestRound(foodIds = emptyList(), selectedFoodIds = emptyList())
     }
 
-    fun toggleFoodSelection(foodId: Int) {
-        _uiState.update { state ->
-            val newSelected = if (state.selectedCurrentRound.contains(foodId)) {
-                state.selectedCurrentRound - foodId
-            } else {
-                state.selectedCurrentRound + foodId
-            }
-            state.copy(selectedCurrentRound = newSelected)
-        }
+    fun onLike() {
+        consumeTopCard(isSelected = true)
     }
 
-    fun submitCurrentRound() {
-        val state = _uiState.value
-        if (state.isLoading || state.isCompleted || state.selectedCurrentRound.isEmpty()) return
+    fun onSkip() {
+        consumeTopCard(isSelected = false)
+    }
 
-        val mergedSelected = state.allSelectedFoodIds + state.selectedCurrentRound
-
-        if (state.currentRound >= MAX_ROUNDS) {
-            _uiState.update {
-                it.copy(
-                    allSelectedFoodIds = mergedSelected,
-                    isCompleted = true
-                )
-            }
-            viewModelScope.launch {
-                localStoreRepository.markOnboardingCompleted()
-            }
-            return
-        }
-
-        _uiState.update {
-            it.copy(allSelectedFoodIds = mergedSelected)
-        }
-
-        fetchConsecutiveSuggest(
-            foodIds = state.allReceivedFoodIds.toList(),
-            selectedFoodIds = mergedSelected.toList()
-        )
+    fun onDislike() {
+        consumeTopCard(isSelected = false)
     }
 
     fun retry() {
-        if (_uiState.value.isLoading || authToken == null) return
-        fetchConsecutiveSuggest(lastFoodIds, lastSelectedIds)
+        if (_uiState.value.isLoading || authToken == null || _uiState.value.isCompleted) return
+        requestRound(lastFoodIds, lastSelectedFoodIds)
     }
 
-    private fun fetchConsecutiveSuggest(foodIds: List<Int>, selectedFoodIds: List<Int>) {
+    private fun consumeTopCard(isSelected: Boolean) {
+        val topCard = _uiState.value.cards.firstOrNull() ?: return
+        if (_uiState.value.isLoading || _uiState.value.isCompleted) return
+
+        allReceivedFoodIds.add(topCard.id)
+        if (isSelected) {
+            allSelectedFoodIds.add(topCard.id)
+        }
+
+        _uiState.update {
+            it.copy(cards = it.cards.drop(1), error = null)
+        }
+
+        if (_uiState.value.cards.isNotEmpty()) {
+            return
+        }
+
+        if (activeRound >= MAX_ROUNDS) {
+            completeOnboarding()
+        } else {
+            requestRound(
+                foodIds = allReceivedFoodIds.toList(),
+                selectedFoodIds = allSelectedFoodIds.toList()
+            )
+        }
+    }
+
+    private fun requestRound(foodIds: List<Int>, selectedFoodIds: List<Int>) {
+        if (_uiState.value.isLoading || _uiState.value.isCompleted) return
+
         val token = authToken ?: return
         lastFoodIds = foodIds
-        lastSelectedIds = selectedFoodIds
+        lastSelectedFoodIds = selectedFoodIds
 
         _uiState.update {
             it.copy(isLoading = true, error = null)
         }
 
         viewModelScope.launch {
-            val res = foodRepository.consecutiveSuggest(token, foodIds, selectedFoodIds)
-            if (res.isSuccess()) {
-                val nextFoods = res.data ?: emptyList()
-                _uiState.update { state ->
-                    state.copy(
+            val response = foodRepository.consecutiveSuggest(
+                token = token,
+                foodIds = foodIds,
+                selectedFoodIds = selectedFoodIds
+            )
+            if (response.isSuccess()) {
+                activeRound += 1
+                val nextCards = response.data ?: emptyList()
+                _uiState.update {
+                    it.copy(
                         isLoading = false,
-                        currentRound = state.currentRound + 1,
-                        foods = nextFoods,
-                        selectedCurrentRound = emptySet(),
-                        allReceivedFoodIds = state.allReceivedFoodIds + nextFoods.map { it.id }
+                        error = null,
+                        currentRound = activeRound,
+                        cards = nextCards
                     )
+                }
+                if (nextCards.isEmpty()) {
+                    if (activeRound >= MAX_ROUNDS) {
+                        completeOnboarding()
+                    } else {
+                        _uiState.update {
+                            it.copy(error = "No foods returned for this round. Tap retry.")
+                        }
+                    }
                 }
             } else {
                 _uiState.update {
-                    it.copy(isLoading = false, error = res.message)
+                    it.copy(isLoading = false, error = response.message)
                 }
             }
+        }
+    }
+
+    private fun completeOnboarding() {
+        _uiState.update {
+            it.copy(isCompleted = true)
+        }
+        viewModelScope.launch {
+            localStoreRepository.markOnboardingCompleted()
         }
     }
 }

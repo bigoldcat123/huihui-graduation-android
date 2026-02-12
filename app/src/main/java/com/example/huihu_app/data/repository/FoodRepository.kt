@@ -3,6 +3,7 @@ package com.example.huihu_app.data.repository
 import com.example.huihu_app.data.model.ApiResponse
 import com.example.huihu_app.data.model.ConsecutiveSuggestRequest
 import com.example.huihu_app.data.model.Food
+import com.example.huihu_app.data.model.FoodReactionRequest
 import com.example.huihu_app.data.source.FoodSource
 
 class FoodRepository(
@@ -19,6 +20,34 @@ class FoodRepository(
                 request = ConsecutiveSuggestRequest(
                     food_ids = foodIds,
                     selected_food_ids = selectedFoodIds
+                )
+            )
+        }.getOrElse {
+            return ApiResponse.from(it)
+        }
+
+    suspend fun recommendation(token: String): ApiResponse<List<Food>> =
+        runCatching {
+            foodSource.recommendation("Bearer $token")
+        }.getOrElse {
+            return ApiResponse.from(it)
+        }
+
+    suspend fun reaction(
+        token: String,
+        foodId: Int,
+        reaction: String,
+        source: String,
+        occurredAt: Long
+    ): ApiResponse<Unit?> =
+        runCatching {
+            foodSource.reaction(
+                token = "Bearer $token",
+                request = FoodReactionRequest(
+                    food_id = foodId,
+                    reaction = reaction,
+                    source = source,
+                    occurred_at = occurredAt
                 )
             )
         }.getOrElse {

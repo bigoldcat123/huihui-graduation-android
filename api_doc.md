@@ -128,6 +128,95 @@ Response (error)
 
 ---
 
+### GET /food/recommendation
+Request
+- Method: `GET`
+- Path: `/food/recommendation`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Params: none
+- Body: none
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 10,
+      "restaurant_id": 2,
+      "name": "Spicy Chicken",
+      "description": "...",
+      "image": "https://..."
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+Notes
+- No pagination.
+- Repeats are allowed in MVP.
+- Client calls this endpoint again when cards are exhausted.
+
+---
+
+### POST /food/recommendation/reaction
+Request
+- Method: `POST`
+- Path: `/food/recommendation/reaction`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "food_id": 10,
+  "reaction": "like",
+  "source": "food_tab",
+  "occurred_at": 1739330100
+}
+```
+
+`reaction` enum
+- `like`
+- `skip`
+- `dislike`
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": 123
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /food/consecutiveSuggest
 Request
 - Method: `POST`
@@ -167,7 +256,7 @@ Response (error)
 ```json
 {
   "code": 500,
-  "message": "SqlError(...)"
+  "message": "SqlError(...) or JwtError(...)"
 }
 ```
 

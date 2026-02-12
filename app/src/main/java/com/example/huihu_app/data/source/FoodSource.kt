@@ -3,7 +3,9 @@ package com.example.huihu_app.data.source
 import com.example.huihu_app.data.model.ApiResponse
 import com.example.huihu_app.data.model.ConsecutiveSuggestRequest
 import com.example.huihu_app.data.model.Food
+import com.example.huihu_app.data.model.FoodReactionRequest
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -13,4 +15,15 @@ interface FoodSource {
         @Header("Authorization") token: String,
         @Body request: ConsecutiveSuggestRequest
     ): ApiResponse<List<Food>>
+
+    @GET("/food/recommendation")
+    suspend fun recommendation(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<Food>>
+
+    @POST("/food/recommendation/reaction")
+    suspend fun reaction(
+        @Header("Authorization") token: String,
+        @Body request: FoodReactionRequest
+    ): ApiResponse<Unit?>
 }

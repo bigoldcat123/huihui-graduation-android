@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.huihu_app.MainApp
 import com.example.huihu_app.ui.viewModel.AppViewModel
 import com.example.huihu_app.ui.viewModel.AuthViewModel
+import com.example.huihu_app.ui.viewModel.FoodRecommendationViewModel
 import com.example.huihu_app.ui.viewModel.HomeViewModel
 import com.example.huihu_app.ui.viewModel.NewPersonViewModel
 
@@ -31,6 +32,11 @@ class AppViewModelProvider {
                 NewPersonViewModel(
                     container().foodRepository,
                     container().localStoreRepository
+                )
+            }
+            initializer {
+                FoodRecommendationViewModel(
+                    container().foodRepository
                 )
             }
         }

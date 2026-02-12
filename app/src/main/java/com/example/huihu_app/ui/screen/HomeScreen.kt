@@ -14,21 +14,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.screen.home.FoodRecommendationScreen
 import com.example.huihu_app.ui.screen.home.ForumScreen
 import com.example.huihu_app.ui.screen.home.MineScreen
+import com.example.huihu_app.ui.viewModel.HomeViewModel
 
 @Composable
-fun HomeScreen() {
-    var selectedTab by remember { mutableIntStateOf(0) }
+fun HomeScreen(
+    token: String,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        bottomBar = { HomeBottomBar(selectedTab = selectedTab, onTabSelected = { selectedTab = it }) }
+        bottomBar = {
+            HomeBottomBar(
+                selectedTab = uiState.selectedTab,
+                onTabSelected = viewModel::selectTab
+            )
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -36,9 +45,9 @@ fun HomeScreen() {
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            when (selectedTab) {
+            when (uiState.selectedTab) {
                 0 -> ForumScreen()
-                1 -> FoodRecommendationScreen()
+                1 -> FoodRecommendationScreen(token = token)
                 else -> MineScreen()
             }
         }
