@@ -49,15 +49,6 @@ fun FoodRecommendationScreen(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
-
-            if (uiState.pendingReactionCount > 0) {
-                Text(
-                    text = "Syncing feedback... (${uiState.pendingReactionCount})",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
             when {
                 uiState.isLoading && uiState.cards.isEmpty() -> {
                     FoodLoadingCard(modifier = Modifier.fillMaxWidth())

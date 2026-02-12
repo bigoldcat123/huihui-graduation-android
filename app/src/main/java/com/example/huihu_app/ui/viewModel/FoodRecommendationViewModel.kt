@@ -14,7 +14,6 @@ data class FoodRecommendationUiState(
     val cards: List<Food> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val pendingReactionCount: Int = 0,
     val acceptedFoodId: Int? = null,
     val feedbackMessage: String? = null
 )
@@ -136,18 +135,9 @@ class FoodRecommendationViewModel(
     }
 
     private fun sendReactionAsync(request: FoodReactionRequest) {
-        _uiState.update {
-            it.copy(pendingReactionCount = it.pendingReactionCount + 1)
-        }
 
         viewModelScope.launch {
-            val token = authToken
-            if (token == null) {
-                _uiState.update {
-                    it.copy(pendingReactionCount = (it.pendingReactionCount - 1).coerceAtLeast(0))
-                }
-                return@launch
-            }
+            val token = authToken ?: return@launch
 
             val response = foodRepository.reaction(
                 token = token,
@@ -157,9 +147,6 @@ class FoodRecommendationViewModel(
                 occurredAt = request.occurred_at
             )
             if (response.isSuccess()) {
-                _uiState.update {
-                    it.copy(pendingReactionCount = (it.pendingReactionCount - 1).coerceAtLeast(0))
-                }
                 return@launch
             }
         }
