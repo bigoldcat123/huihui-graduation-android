@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -29,7 +30,7 @@ import com.example.huihu_app.ui.viewModel.ForumViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForumScreen(viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)) {
+fun ForumScreen(state: LazyListState, viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)) {
     val topics = viewModel.topics.collectAsLazyPagingItems()
     val isRefreshing = topics.loadState.refresh is LoadState.Loading
 
@@ -59,6 +60,7 @@ fun ForumScreen(viewModel: ForumViewModel = viewModel(factory = AppViewModelProv
         }
 
         LazyColumn(
+            state = state,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),

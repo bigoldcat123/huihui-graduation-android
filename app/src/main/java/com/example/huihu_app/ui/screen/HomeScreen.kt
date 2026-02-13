@@ -3,6 +3,7 @@ package com.example.huihu_app.ui.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Forum
@@ -37,6 +38,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val state = rememberLazyListState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +74,7 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             when (uiState.selectedTab) {
-                0 -> ForumScreen()
+                0 -> ForumScreen(state)
                 1 -> FoodRecommendationScreen(token = token)
                 else -> MineScreen(onLogout = viewModel::logout)
             }
