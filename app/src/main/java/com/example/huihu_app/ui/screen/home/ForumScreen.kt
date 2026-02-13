@@ -16,8 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -203,36 +206,56 @@ private fun TopicItem(
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = topic.create_at,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                OutlinedButton(
-                    onClick = onToggleLike,
-                    enabled = !likeActionInFlight
-                ) {
-                    Icon(
-                        imageVector = if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = null
-                    )
-                    Text(
-                        text = if (liked) "Liked" else "Like",
-                        modifier = Modifier.padding(start = 6.dp)
-                    )
-                }
-            }
-
             Text(
-                text = "$likeCount likes · ${topic.comment_count} comments",
+                text = topic.create_at,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedButton(
+                    onClick = onToggleLike,
+                    enabled = !likeActionInFlight,
+                    modifier = Modifier
+                        .height(34.dp),
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                ) {
+                    Icon(
+                        imageVector = if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = null,
+                        modifier = Modifier.height(14.dp)
+                    )
+                    Text(
+                        text = "$likeCount",
+                        modifier = Modifier.padding(start = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 11.sp
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .height(34.dp),
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ChatBubbleOutline,
+                        contentDescription = null,
+                        modifier = Modifier.height(14.dp)
+                    )
+                    Text(
+                        text = "${topic.comment_count}",
+                        modifier = Modifier.padding(start = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 11.sp
+                    )
+                }
+            }
         }
     }
 }

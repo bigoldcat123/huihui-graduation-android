@@ -190,7 +190,8 @@ Response (success)
   "data": {
     "id": 1,
     "email": "user@example.com",
-    "name": "username"
+    "name": "username",
+    "profile": "https://cdn.example.com/avatar.jpg"
   }
 }
 ```
@@ -372,7 +373,8 @@ Response (success)
       "user_info": {
         "id": 3,
         "name": "alice",
-        "email": "alice@example.com"
+        "email": "alice@example.com",
+        "profile": "https://cdn.example.com/avatar.jpg"
       },
       "comment_count": 12,
       "like_count": 34,
