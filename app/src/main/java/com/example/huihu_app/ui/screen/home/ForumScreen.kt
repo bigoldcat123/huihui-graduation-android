@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,9 +30,18 @@ import com.example.huihu_app.ui.viewModel.ForumViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForumScreen(viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)) {
+fun ForumScreen(
+    refreshSignal: Int,
+    viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
+) {
     val topics = viewModel.topics.collectAsLazyPagingItems()
     val isRefreshing = topics.loadState.refresh is LoadState.Loading
+
+    LaunchedEffect(refreshSignal) {
+        if (refreshSignal > 0) {
+            topics.refresh()
+        }
+    }
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,

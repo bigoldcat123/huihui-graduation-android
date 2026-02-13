@@ -380,14 +380,7 @@ Response (success)
 {
   "code": 200,
   "message": "ok",
-  "data": {
-    "id": 100,
-    "user_id": 3,
-    "title": "My topic title",
-    "content": "My topic content",
-    "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
-    "create_at": "2026-02-13T09:30:00+00:00"
-  }
+  "data": null
 }
 ```
 

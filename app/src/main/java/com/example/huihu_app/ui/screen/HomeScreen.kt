@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -30,6 +32,8 @@ import com.example.huihu_app.ui.viewModel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
     token: String,
+    forumRefreshSignal: Int,
+    onCreateTopic: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,6 +57,13 @@ fun HomeScreen(
                 selectedTab = uiState.selectedTab,
                 onTabSelected = viewModel::selectTab
             )
+        },
+        floatingActionButton = {
+            if (uiState.selectedTab == 0) {
+                FloatingActionButton(onClick = onCreateTopic) {
+                    Icon(Icons.Filled.Add, contentDescription = "Create topic")
+                }
+            }
         }
     ) { paddingValues ->
         Box(
@@ -62,7 +73,7 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             when (uiState.selectedTab) {
-                0 -> ForumScreen()
+                0 -> ForumScreen(refreshSignal = forumRefreshSignal)
                 1 -> FoodRecommendationScreen(token = token)
                 else -> MineScreen(onLogout = viewModel::logout)
             }

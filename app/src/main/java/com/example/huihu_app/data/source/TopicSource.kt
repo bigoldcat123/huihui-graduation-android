@@ -1,11 +1,28 @@
 package com.example.huihu_app.data.source
 
 import com.example.huihu_app.data.model.ApiResponse
+import com.example.huihu_app.data.model.CreateTopicRequest
 import com.example.huihu_app.data.model.Topic
+import okhttp3.MultipartBody
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface TopicSource {
     @GET("/topic")
     suspend fun topics(@Query("page") page: Int): ApiResponse<List<Topic>>
+
+    @Multipart
+    @POST("/upload")
+    suspend fun upload(@Part files: List<MultipartBody.Part>): ApiResponse<List<String>>
+
+    @POST("/topic")
+    suspend fun createTopic(
+        @Header("Authorization") token: String,
+        @Body request: CreateTopicRequest
+    ): ApiResponse<Unit>
 }

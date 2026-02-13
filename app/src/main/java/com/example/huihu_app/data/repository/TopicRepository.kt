@@ -1,9 +1,15 @@
 package com.example.huihu_app.data.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.example.huihu_app.data.model.ApiResponse
+import com.example.huihu_app.data.model.CreateTopicRequest
+import com.example.huihu_app.data.model.Topic
 import com.example.huihu_app.data.source.TopicSource
+import okhttp3.MultipartBody
 
+private const val TAG = "TopicRepository"
 class TopicRepository(
     private val topicSource: TopicSource,
 ) {
@@ -16,4 +22,39 @@ class TopicRepository(
         ),
         pagingSourceFactory = { TopicPagingSource(topicSource) }
     )
+
+    suspend fun uploadImages(parts: List<MultipartBody.Part>): ApiResponse<List<String>> =
+        runCatching {
+            topicSource.upload(parts)
+        }.getOrElse {
+            return ApiResponse.from(it)
+        }
+
+    suspend fun createTopic(
+        token: String,
+        title: String,
+        content: String,
+        images: List<String>
+    ): ApiResponse<Unit> =
+        runCatching {
+            Log.d(
+                TAG, "createTopic: ${
+                    CreateTopicRequest(
+                        title = title,
+                        content = content,
+                        images = images
+                    )
+                }"
+            )
+            topicSource.createTopic(
+                token = "Bearer $token",
+                request = CreateTopicRequest(
+                    title = title,
+                    content = content,
+                    images = images
+                )
+            )
+        }.getOrElse {
+            return ApiResponse.from(it)
+        }
 }

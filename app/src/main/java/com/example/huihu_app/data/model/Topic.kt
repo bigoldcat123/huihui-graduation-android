@@ -8,7 +8,7 @@ data class Topic(
     val user_id: Int,
     val title: String,
     val content: String,
-    val images: List<String> = emptyList(),
+    val images: List<String>?,
     val create_at: String,
     val user_info: TopicUserInfo? = null,
     val comment_count: Int = 0,
