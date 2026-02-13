@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -26,7 +25,6 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
 
     val backStack = rememberNavBackStack()
     var authToken by rememberSaveable { mutableStateOf<String?>(null) }
-    var forumRefreshSignal by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(authState) {
         backStack.clear()
@@ -71,7 +69,6 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                 entry<Nav.Home>() {
                     HomeScreen(
                         token = authToken!!,
-                        forumRefreshSignal = forumRefreshSignal,
                         onCreateTopic = { backStack.add(Nav.CreateTopic) }
                     )
                 }
@@ -79,7 +76,6 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                     CreateTopicScreen(
                         token = authToken!!,
                         onCreated = {
-                            forumRefreshSignal += 1
                             if (backStack.size > 1) {
                                 backStack.removeLast()
                             } else {

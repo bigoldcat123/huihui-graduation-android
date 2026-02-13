@@ -32,7 +32,6 @@ import com.example.huihu_app.ui.viewModel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
     token: String,
-    forumRefreshSignal: Int,
     onCreateTopic: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
@@ -73,7 +72,7 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             when (uiState.selectedTab) {
-                0 -> ForumScreen(refreshSignal = forumRefreshSignal)
+                0 -> ForumScreen()
                 1 -> FoodRecommendationScreen(token = token)
                 else -> MineScreen(onLogout = viewModel::logout)
             }
