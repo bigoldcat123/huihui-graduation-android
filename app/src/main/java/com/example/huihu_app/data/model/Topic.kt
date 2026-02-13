@@ -20,5 +20,6 @@ data class Topic(
 data class TopicUserInfo(
     val id: Int,
     val name: String,
-    val email: String
+    val email: String,
+    val profile: String? = null
 )

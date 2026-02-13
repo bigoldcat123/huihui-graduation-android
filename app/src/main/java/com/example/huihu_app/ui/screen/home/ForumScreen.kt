@@ -2,6 +2,7 @@ package com.example.huihu_app.ui.screen.home
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -9,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -32,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -162,98 +167,129 @@ private fun TopicItem(
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = topic.user_info?.name ?: "User ${topic.user_id}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = topic.title,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = topic.content,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            val images = topic.images.orEmpty()
-            if (images.isNotEmpty()) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                ) {
-                    items(images) { rawUrl ->
-                        AsyncImage(
-                            model = rawUrl.toAbsoluteImageUrl(),
-                            contentDescription = topic.title,
-                            modifier = Modifier
-                                .aspectRatio(1.2f)
-                                .clip(RoundedCornerShape(10.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                val profileUrl = topic.user_info?.profile
+                if (!profileUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = profileUrl.toAbsoluteImageUrl(),
+                        contentDescription = topic.user_info?.name ?: "profile",
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant)
+                            .alpha(0.2f)
+                    )
                 }
             }
 
-            Text(
-                text = topic.create_at,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedButton(
-                    onClick = onToggleLike,
-                    enabled = !likeActionInFlight,
-                    modifier = Modifier
-                        .height(34.dp),
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                ) {
-                    Icon(
-                        imageVector = if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = null,
-                        modifier = Modifier.height(14.dp)
-                    )
-                    Text(
-                        text = "$likeCount",
-                        modifier = Modifier.padding(start = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontSize = 11.sp
-                    )
+                Text(
+                    text = topic.user_info?.name ?: "User ${topic.user_id}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = topic.title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = topic.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                val images = topic.images.orEmpty()
+                if (images.isNotEmpty()) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) {
+                        items(images) { rawUrl ->
+                            AsyncImage(
+                                model = rawUrl.toAbsoluteImageUrl(),
+                                contentDescription = topic.title,
+                                modifier = Modifier
+                                    .aspectRatio(1.2f)
+                                    .clip(RoundedCornerShape(10.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
 
-                OutlinedButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .height(34.dp),
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                Text(
+                    text = topic.create_at,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ChatBubbleOutline,
-                        contentDescription = null,
-                        modifier = Modifier.height(14.dp)
-                    )
-                    Text(
-                        text = "${topic.comment_count}",
-                        modifier = Modifier.padding(start = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontSize = 11.sp
-                    )
+                    OutlinedButton(
+                        onClick = onToggleLike,
+                        enabled = !likeActionInFlight,
+                        modifier = Modifier
+                            .height(34.dp),
+                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                    ) {
+                        Icon(
+                            imageVector = if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = null,
+                            modifier = Modifier.height(14.dp)
+                        )
+                        Text(
+                            text = "$likeCount",
+                            modifier = Modifier.padding(start = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 11.sp
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier
+                            .height(34.dp),
+                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ChatBubbleOutline,
+                            contentDescription = null,
+                            modifier = Modifier.height(14.dp)
+                        )
+                        Text(
+                            text = "${topic.comment_count}",
+                            modifier = Modifier.padding(start = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 11.sp
+                        )
+                    }
                 }
             }
         }
