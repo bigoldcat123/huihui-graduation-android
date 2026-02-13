@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,6 +62,7 @@ fun TopicDetailScreen(
     topic: Topic,
     onBack: () -> Unit,
     onWriteComment: (Int) -> Unit,
+    onOpenTopicDetail: (Topic) -> Unit,
     viewModel: TopicDetailViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -145,7 +147,8 @@ fun TopicDetailScreen(
                     likeUi = topLikeUi,
                     likeActionInFlight = topic.id in uiState.inFlightTopicIds,
                     onToggleLike = { viewModel.onToggleLike(token, topic) },
-                    onWriteComment = { onWriteComment(topic.id) }
+                    onCommentClick = { onWriteComment(topic.id) },
+                    onTopicClick = null
                 )
             }
             item {
@@ -161,7 +164,8 @@ fun TopicDetailScreen(
                     likeUi = uiState.likeOverrides[comment.id],
                     likeActionInFlight = comment.id in uiState.inFlightTopicIds,
                     onToggleLike = { viewModel.onToggleLike(token, comment) },
-                    onWriteComment = { onWriteComment(comment.id) }
+                    onCommentClick = { onWriteComment(comment.id) },
+                    onTopicClick = { onOpenTopicDetail(comment) }
                 )
             }
         }
@@ -174,12 +178,20 @@ private fun TopicCard(
     likeUi: TopicLikeUi?,
     likeActionInFlight: Boolean,
     onToggleLike: () -> Unit,
-    onWriteComment: () -> Unit
+    onCommentClick: () -> Unit,
+    onTopicClick: (() -> Unit)?
 ) {
     val liked = likeUi?.liked ?: topic.liked
     val likeCount = likeUi?.likeCount ?: topic.like_count
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (onTopicClick != null) Modifier.clickable(onClick = onTopicClick)
+                else Modifier
+            )
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -232,7 +244,7 @@ private fun TopicCard(
                     commentCount = topic.comment_count,
                     likeActionInFlight = likeActionInFlight,
                     onToggleLike = onToggleLike,
-                    onWriteComment = onWriteComment
+                    onCommentClick = onCommentClick
                 )
             }
         }
@@ -246,7 +258,7 @@ private fun TopicActionRow(
     commentCount: Int,
     likeActionInFlight: Boolean,
     onToggleLike: () -> Unit,
-    onWriteComment: () -> Unit
+    onCommentClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -273,7 +285,7 @@ private fun TopicActionRow(
         }
 
         OutlinedButton(
-            onClick = onWriteComment,
+            onClick = onCommentClick,
             modifier = Modifier.height(34.dp),
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding
         ) {

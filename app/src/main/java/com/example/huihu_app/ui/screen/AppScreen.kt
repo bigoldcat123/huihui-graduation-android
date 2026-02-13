@@ -85,7 +85,8 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                                 backStack.add(Nav.Home)
                             }
                         },
-                        onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) }
+                        onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) },
+                        onOpenTopicDetail = { topic -> backStack.add(Nav.TopicDetail(topic)) }
                     )
                 }
                 entry<Nav.CreateTopic>() {
