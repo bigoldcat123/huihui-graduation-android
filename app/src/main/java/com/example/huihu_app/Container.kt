@@ -6,8 +6,10 @@ import com.example.huihu_app.data.local.AppDatabase
 import com.example.huihu_app.data.repository.AuthRepository
 import com.example.huihu_app.data.repository.FoodRepository
 import com.example.huihu_app.data.repository.LocalStoreRepository
+import com.example.huihu_app.data.repository.TopicRepository
 import com.example.huihu_app.data.source.AuthSource
 import com.example.huihu_app.data.source.FoodSource
+import com.example.huihu_app.data.source.TopicSource
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -35,6 +37,10 @@ class AppContainer(context: Context) {
         retrofit.create(FoodSource::class.java)
     }
 
+    val topicSource by lazy {
+        retrofit.create(TopicSource::class.java)
+    }
+
     val foodCacheDao by lazy {
         appDatabase.foodCacheDao()
     }
@@ -49,5 +55,9 @@ class AppContainer(context: Context) {
 
     val foodRepository by lazy {
         FoodRepository(foodSource, foodCacheDao)
+    }
+
+    val topicRepository by lazy {
+        TopicRepository(topicSource)
     }
 }

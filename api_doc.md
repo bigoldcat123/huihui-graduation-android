@@ -18,6 +18,42 @@ Response
 
 ---
 
+### POST /upload
+Upload one or more files.
+
+Request
+- Method: `POST`
+- Path: `/upload`
+- Content-Type: `multipart/form-data`
+- Form field:
+- `files`: file[] (multiple files supported)
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    "/static/uploads/1739330100000000000_0.jpg",
+    "/static/uploads/1739330100000000001_1.png"
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "save file failed: ..."
+}
+```
+
+---
+
 ### POST /auth/login
 Request
 - Method: `POST`
@@ -247,6 +283,111 @@ Response (success)
       "image": "https://..."
     }
   ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### GET /topic
+Fetch topics by page.
+
+Request
+- Method: `GET`
+- Path: `/topic`
+- Query:
+- `page`: number, optional, default `1`
+- Body: none
+- Behavior: only returns topics with `is_top = true`.
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 1,
+      "user_id": 3,
+      "title": "My topic",
+      "content": "Topic content",
+      "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
+      "create_at": "2026-02-13T09:30:00+00:00",
+      "user_info": {
+        "id": 3,
+        "name": "alice",
+        "email": "alice@example.com"
+      },
+      "comment_count": 12,
+      "like_count": 34
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...)"
+}
+```
+
+---
+
+### POST /topic
+Create a topic.
+
+Request
+- Method: `POST`
+- Path: `/topic`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "title": "My topic title",
+  "content": "My topic content",
+  "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
+  "reply_to_id": 12
+}
+```
+
+Behavior
+- If `reply_to_id` is `null` or omitted:
+- Creates topic with `is_top = true`.
+- If `reply_to_id` is provided:
+- Creates topic with `is_top = false`.
+- Inserts `(new_topic_id, reply_to_id)` into `reply` table.
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 100,
+    "user_id": 3,
+    "title": "My topic title",
+    "content": "My topic content",
+    "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
+    "create_at": "2026-02-13T09:30:00+00:00"
+  }
 }
 ```
 
