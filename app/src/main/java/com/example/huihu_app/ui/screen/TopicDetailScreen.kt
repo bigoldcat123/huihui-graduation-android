@@ -101,38 +101,6 @@ fun TopicDetailScreen(
             )
         }
     ) { paddingValues ->
-        if (uiState.isLoading && uiState.comments.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-            return@Scaffold
-        }
-
-        if (uiState.error != null && uiState.comments.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = uiState.error ?: "Failed to load comments",
-                    color = MaterialTheme.colorScheme.error
-                )
-                Button(onClick = { viewModel.loadComments(token, topic.id) }) {
-                    Text("Retry")
-                }
-            }
-            return@Scaffold
-        }
-
         val topLikeUi = uiState.likeOverrides[topic.id]
         LazyColumn(
             modifier = Modifier
@@ -158,15 +126,46 @@ fun TopicDetailScreen(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            items(uiState.comments, key = { it.id }) { comment ->
-                TopicCard(
-                    topic = comment,
-                    likeUi = uiState.likeOverrides[comment.id],
-                    likeActionInFlight = comment.id in uiState.inFlightTopicIds,
-                    onToggleLike = { viewModel.onToggleLike(token, comment) },
-                    onCommentClick = { onWriteComment(comment.id) },
-                    onTopicClick = { onOpenTopicDetail(comment) }
-                )
+            if (uiState.isLoading && uiState.comments.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else if (uiState.error != null && uiState.comments.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = uiState.error ?: "Failed to load comments",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Button(onClick = { viewModel.loadComments(token, topic.id) }) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            } else {
+                items(uiState.comments, key = { it.id }) { comment ->
+                    TopicCard(
+                        topic = comment,
+                        likeUi = uiState.likeOverrides[comment.id],
+                        likeActionInFlight = comment.id in uiState.inFlightTopicIds,
+                        onToggleLike = { viewModel.onToggleLike(token, comment) },
+                        onCommentClick = { onWriteComment(comment.id) },
+                        onTopicClick = { onOpenTopicDetail(comment) }
+                    )
+                }
             }
         }
     }
