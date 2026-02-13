@@ -60,6 +60,7 @@ import com.example.huihu_app.ui.viewModel.TopicLikeUi
 fun ForumScreen(
     state: LazyListState,
     token: String,
+    onWriteComment: (Int) -> Unit,
     viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val topics = viewModel.topics(token).collectAsLazyPagingItems()
@@ -113,7 +114,8 @@ fun ForumScreen(
                         topic = topic,
                         likeUi = likeUi,
                         likeActionInFlight = topic.id in uiState.inFlightTopicIds,
-                        onToggleLike = { viewModel.onToggleLike(token, topic) }
+                        onToggleLike = { viewModel.onToggleLike(token, topic) },
+                        onWriteComment = { onWriteComment(topic.id) }
                     )
                 }
             }
@@ -159,7 +161,8 @@ private fun TopicItem(
     topic: Topic,
     likeUi: TopicLikeUi?,
     likeActionInFlight: Boolean,
-    onToggleLike: () -> Unit
+    onToggleLike: () -> Unit,
+    onWriteComment: () -> Unit
 ) {
     val liked = likeUi?.liked ?: topic.liked
     val likeCount = likeUi?.likeCount ?: topic.like_count
@@ -181,7 +184,8 @@ private fun TopicItem(
                 liked = liked,
                 likeCount = likeCount,
                 likeActionInFlight = likeActionInFlight,
-                onToggleLike = onToggleLike
+                onToggleLike = onToggleLike,
+                onWriteComment = onWriteComment
             )
         }
     }
@@ -222,7 +226,8 @@ private fun TopicItemContent(
     liked: Boolean,
     likeCount: Int,
     likeActionInFlight: Boolean,
-    onToggleLike: () -> Unit
+    onToggleLike: () -> Unit,
+    onWriteComment: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -246,7 +251,8 @@ private fun TopicItemContent(
             likeCount = likeCount,
             commentCount = topic.comment_count,
             likeActionInFlight = likeActionInFlight,
-            onToggleLike = onToggleLike
+            onToggleLike = onToggleLike,
+            onWriteComment = onWriteComment
         )
     }
 }
@@ -292,7 +298,8 @@ private fun TopicFooter(
     likeCount: Int,
     commentCount: Int,
     likeActionInFlight: Boolean,
-    onToggleLike: () -> Unit
+    onToggleLike: () -> Unit,
+    onWriteComment: () -> Unit
 ) {
     Text(
         text = createdAt,
@@ -311,7 +318,10 @@ private fun TopicFooter(
             enabled = !likeActionInFlight,
             onClick = onToggleLike
         )
-        TopicCommentCountButton(commentCount = commentCount)
+        TopicCommentCountButton(
+            commentCount = commentCount,
+            onClick = onWriteComment
+        )
     }
 }
 
@@ -343,9 +353,9 @@ private fun TopicLikeButton(
 }
 
 @Composable
-private fun TopicCommentCountButton(commentCount: Int) {
+private fun TopicCommentCountButton(commentCount: Int, onClick: () -> Unit) {
     OutlinedButton(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier.height(34.dp),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding
     ) {

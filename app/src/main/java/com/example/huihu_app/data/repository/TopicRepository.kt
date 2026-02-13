@@ -35,7 +35,8 @@ class TopicRepository(
         token: String,
         title: String,
         content: String,
-        images: List<String>
+        images: List<String>,
+        commentToId: Int? = null
     ): ApiResponse<Unit> =
         runCatching {
             Log.d(
@@ -43,7 +44,8 @@ class TopicRepository(
                     CreateTopicRequest(
                         title = title,
                         content = content,
-                        images = images
+                        images = images,
+                        reply_to_id = commentToId
                     )
                 }"
             )
@@ -52,7 +54,8 @@ class TopicRepository(
                 request = CreateTopicRequest(
                     title = title,
                     content = content,
-                    images = images
+                    images = images,
+                    reply_to_id = commentToId
                 )
             )
         }.getOrElse {

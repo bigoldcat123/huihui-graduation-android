@@ -109,7 +109,7 @@ class CreateTopicViewModel(
         _uiState.update { it.copy(created = false) }
     }
 
-    fun submit(token: String) {
+    fun submit(token: String, commentToId: Int? = null) {
         val state = _uiState.value
         if (state.isSubmitting) return
         if (state.title.isBlank() || state.content.isBlank()) {
@@ -132,7 +132,8 @@ class CreateTopicViewModel(
                 token = token,
                 title = state.title,
                 content = state.content,
-                images = state.selectedImages.mapNotNull { it.uploadedUrl }
+                images = state.selectedImages.mapNotNull { it.uploadedUrl },
+                commentToId = commentToId
             )
 
             if (!createRes.isSuccess()) {

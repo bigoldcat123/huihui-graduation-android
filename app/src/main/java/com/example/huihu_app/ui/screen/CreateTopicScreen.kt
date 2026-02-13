@@ -28,6 +28,9 @@ import com.example.huihu_app.ui.viewModel.CreateTopicViewModel
 @Composable
 fun CreateTopicScreen(
     token: String,
+    commentToId: Int? = null,
+    screenTitle: String = "Create Topic",
+    submitButtonText: String = "Create Topic",
     onCreated: () -> Unit,
     viewModel: CreateTopicViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
@@ -49,6 +52,11 @@ fun CreateTopicScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Text(
+                text = screenTitle,
+                style = MaterialTheme.typography.titleLarge
+            )
+
             OutlinedTextField(
                 value = uiState.title,
                 onValueChange = viewModel::updateTitle,
@@ -85,7 +93,7 @@ fun CreateTopicScreen(
             }
 
             Button(
-                onClick = { viewModel.submit(token = token) },
+                onClick = { viewModel.submit(token = token, commentToId = commentToId) },
                 enabled = !uiState.isSubmitting && !uiState.isUploadingImages,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -96,7 +104,7 @@ fun CreateTopicScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Create Topic")
+                    Text(submitButtonText)
                 }
             }
         }

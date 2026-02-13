@@ -34,6 +34,7 @@ import com.example.huihu_app.ui.viewModel.HomeViewModel
 fun HomeScreen(
     token: String,
     onCreateTopic: () -> Unit,
+    onWriteComment: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,7 +75,11 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             when (uiState.selectedTab) {
-                0 -> ForumScreen(state = state, token = token)
+                0 -> ForumScreen(
+                    state = state,
+                    token = token,
+                    onWriteComment = onWriteComment
+                )
                 1 -> FoodRecommendationScreen(token = token)
                 else -> MineScreen(onLogout = viewModel::logout)
             }

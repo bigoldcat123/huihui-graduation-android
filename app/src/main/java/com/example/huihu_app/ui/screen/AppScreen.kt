@@ -69,12 +69,28 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                 entry<Nav.Home>() {
                     HomeScreen(
                         token = authToken!!,
-                        onCreateTopic = { backStack.add(Nav.CreateTopic) }
+                        onCreateTopic = { backStack.add(Nav.CreateTopic) },
+                        onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) }
                     )
                 }
                 entry<Nav.CreateTopic>() {
                     CreateTopicScreen(
                         token = authToken!!,
+                        onCreated = {
+                            if (backStack.size > 1) {
+                                backStack.removeLast()
+                            } else {
+                                backStack.add(Nav.Home)
+                            }
+                        }
+                    )
+                }
+                entry<Nav.WriteComment> { nav ->
+                    CreateTopicScreen(
+                        token = authToken!!,
+                        commentToId = nav.commentToId,
+                        screenTitle = "Write Comment",
+                        submitButtonText = "Post Comment",
                         onCreated = {
                             if (backStack.size > 1) {
                                 backStack.removeLast()
