@@ -72,8 +72,12 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                         onCreateTopic = { backStack.add(Nav.CreateTopic) },
                         onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) },
                         onOpenTopicDetail = { topic -> backStack.add(Nav.TopicDetail(topic)) },
-                        onEditProfile = { backStack.add(Nav.EditProfile) }
+                        onEditProfile = { backStack.add(Nav.EditProfile) },
+                        onFoodTrack = { backStack.add(Nav.FoodTrack) }
                     )
+                }
+                entry<Nav.FoodTrack>() {
+                    FoodTrackScreen()
                 }
                 entry<Nav.EditProfile>() {
                     EditProfileScreen(

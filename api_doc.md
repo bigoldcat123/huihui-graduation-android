@@ -91,6 +91,45 @@ Response (error)
 
 ---
 
+### POST /auth/login/root
+Root login (only `user_id = 1` can login via this API).
+
+Request
+- Method: `POST`
+- Path: `/auth/login/root`
+- Body:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "token": "<jwt>"
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /topic/like
 Like or unlike a topic with one API.
 
@@ -181,6 +220,123 @@ Response (error)
 {
   "code": 500,
   "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### GET /tag
+List all tags.
+
+Request
+- Method: `GET`
+- Path: `/tag`
+- Body: none
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 1,
+      "name": "Spicy",
+      "image": "https://..."
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...)"
+}
+```
+
+---
+
+### POST /tag
+Create a new tag.
+
+Request
+- Method: `POST`
+- Path: `/tag`
+- Body:
+```json
+{
+  "name": "Spicy",
+  "image": "https://cdn.example.com/tags/spicy.png"
+}
+```
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 1,
+    "name": "Spicy",
+    "image": "https://cdn.example.com/tags/spicy.png"
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...)"
+}
+```
+
+---
+
+### GET /restaurant
+List all restaurants.
+
+Request
+- Method: `GET`
+- Path: `/restaurant`
+- Body: none
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 1,
+      "name": "Sunset Noodle House",
+      "description": "Hand-pulled noodles and light broths.",
+      "location": "Downtown",
+      "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...)"
 }
 ```
 
@@ -351,6 +507,195 @@ Notes
 - No pagination.
 - Repeats are allowed in MVP.
 - Client calls this endpoint again when cards are exhausted.
+
+---
+
+### GET /food/list
+List foods with pagination (root only).
+
+Request
+- Method: `GET`
+- Path: `/food/list`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Query:
+- `page`: number, optional, default `1`
+- `page_size`: number, optional, default `10`, range `1..100`
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 10,
+      "restaurant_id": 2,
+      "restaurant_name": "Sunset Noodle House",
+      "name": "Spicy Chicken",
+      "description": "...",
+      "image": "https://...",
+      "tags": [
+        {
+          "id": 1,
+          "name": "Spicy",
+          "image": "https://..."
+        },
+        {
+          "id": 3,
+          "name": "Popular",
+          "image": "https://..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### POST /food
+Create a new food (root only).
+
+Request
+- Method: `POST`
+- Path: `/food`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "restaurant_id": 2,
+  "name": "Spicy Chicken",
+  "description": "Hot and crispy.",
+  "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+  "tag_ids": [1, 3]
+}
+```
+
+Notes
+- `tag_ids` is optional.
+- If `tag_ids` is omitted or empty, food is created without tags.
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 10,
+    "restaurant_id": 2,
+    "restaurant_name": "Sunset Noodle House",
+    "name": "Spicy Chicken",
+    "description": "Hot and crispy.",
+    "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+    "tags": [
+      {
+        "id": 1,
+        "name": "Spicy",
+        "image": "https://..."
+      },
+      {
+        "id": 3,
+        "name": "Popular",
+        "image": "https://..."
+      }
+    ]
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### POST /food/update
+Update a food (root only), including restaurant, tags, and base fields.
+
+Request
+- Method: `POST`
+- Path: `/food/update`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "id": 10,
+  "restaurant_id": 3,
+  "name": "Spicy Chicken (Updated)",
+  "description": "Hot and crispy, updated recipe.",
+  "image": "https://cdn.example.com/foods/spicy-chicken-v2.jpg",
+  "tag_ids": [1, 4]
+}
+```
+
+Notes
+- `tag_ids` fully replaces existing food tags.
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 10,
+    "restaurant_id": 3,
+    "restaurant_name": "Brick Oven Bistro",
+    "name": "Spicy Chicken (Updated)",
+    "description": "Hot and crispy, updated recipe.",
+    "image": "https://cdn.example.com/foods/spicy-chicken-v2.jpg",
+    "tags": [
+      {
+        "id": 1,
+        "name": "Spicy",
+        "image": "https://..."
+      },
+      {
+        "id": 4,
+        "name": "Gluten-Free",
+        "image": "https://..."
+      }
+    ]
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
 
 ---
 

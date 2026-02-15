@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.huihu_app.AppContainer
 import com.example.huihu_app.data.model.Food
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,7 +113,7 @@ fun FoodCardContent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             AsyncImage(
-                model = food.image,
+                model = AppContainer.BASE_URL + food.image,
                 contentDescription = food.name,
                 modifier = Modifier
                     .fillMaxWidth()

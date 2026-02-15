@@ -38,6 +38,7 @@ fun HomeScreen(
     onWriteComment: (Int) -> Unit,
     onOpenTopicDetail: (Topic) -> Unit,
     onEditProfile: () -> Unit,
+    onFoodTrack: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -88,6 +89,7 @@ fun HomeScreen(
                 else -> MineScreen(
                     token = token,
                     onEditProfile = onEditProfile,
+                    onFoodTrack = onFoodTrack,
                     onLogout = viewModel::logout
                 )
             }

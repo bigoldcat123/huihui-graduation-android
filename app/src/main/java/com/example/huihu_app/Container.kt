@@ -62,6 +62,6 @@ class AppContainer(context: Context) {
     }
 
     companion object {
-        const val BASE_URL = "http://192.168.1.216:8899/"
+        const val BASE_URL = "http://mbp.local:8899"
     }
 }
