@@ -1,18 +1,46 @@
 package com.example.huihu_app.ui.screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import android.view.ViewGroup
+import android.webkit.WebView
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 fun FoodTrackScreen() {
-    val context = LocalContext.current
-    Scaffold() {paddingValues ->
-        Box(Modifier.padding(paddingValues)) {
+    Column(Modifier
+        .fillMaxSize()
+        .background(Color.Blue)) {
+        WebPage(url = "http://mbp.local:3000/foodtrack", modifier = Modifier.fillMaxSize())
+    }
+}
 
+@Composable
+fun WebPage(modifier: Modifier = Modifier, url: String) {
+    val context = LocalContext.current
+    val webView = remember {
+        WebView(context).apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
         }
     }
+
+
+    AndroidView(
+        modifier = modifier,
+        factory = { webView },
+        update = {
+            it.loadUrl(url)
+        }
+    )
 }

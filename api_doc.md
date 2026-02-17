@@ -303,6 +303,48 @@ Response (error)
 
 ---
 
+### GET /tag/liked-values
+Get liked-tag weight summary for current user.
+
+Request
+- Method: `GET`
+- Path: `/tag/liked-values`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body: none
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "name": "Spicy",
+      "value": 5.0
+    },
+    {
+      "name": "Popular",
+      "value": 3.0
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### GET /restaurant
 List all restaurants.
 
