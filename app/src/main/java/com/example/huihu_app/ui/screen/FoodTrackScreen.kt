@@ -1,5 +1,6 @@
 package com.example.huihu_app.ui.screen
 
+import android.net.Uri
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.compose.foundation.background
@@ -13,12 +14,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
-fun FoodTrackScreen() {
-    Column(Modifier
-        .fillMaxSize()
-        .background(Color.Blue)) {
-        WebPage(url = "http://mbp.local:3000/foodtrack", modifier = Modifier.fillMaxSize())
-    }
+fun FoodTrackScreen(token: String) {
+
+    val encodedToken = Uri.encode(token)
+    WebPage(
+        url = "http://mbp.local:3000/foodtrack?token=$encodedToken",
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 @Composable

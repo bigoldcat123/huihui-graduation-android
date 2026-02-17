@@ -77,7 +77,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                     )
                 }
                 entry<Nav.FoodTrack>() {
-                    FoodTrackScreen()
+                    FoodTrackScreen(token = authToken!!)
                 }
                 entry<Nav.EditProfile>() {
                     EditProfileScreen(
