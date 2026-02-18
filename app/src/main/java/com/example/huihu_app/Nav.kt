@@ -16,6 +16,8 @@ sealed interface Nav {
     @Serializable
     object FoodTrack: Nav, NavKey
     @Serializable
+    object Suggestion: Nav, NavKey
+    @Serializable
     data class TopicDetail(val topic: Topic): Nav, NavKey
     @Serializable
     data class WriteComment(val commentToId: Int): Nav, NavKey

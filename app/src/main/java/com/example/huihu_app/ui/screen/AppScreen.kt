@@ -73,8 +73,12 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                         onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) },
                         onOpenTopicDetail = { topic -> backStack.add(Nav.TopicDetail(topic)) },
                         onEditProfile = { backStack.add(Nav.EditProfile) },
+                        onSuggestion = { backStack.add(Nav.Suggestion) },
                         onFoodTrack = { backStack.add(Nav.FoodTrack) }
                     )
+                }
+                entry<Nav.Suggestion>() {
+                    SuggestionScreen(token = authToken!!)
                 }
                 entry<Nav.FoodTrack>() {
                     FoodTrackScreen(token = authToken!!)

@@ -44,6 +44,7 @@ import com.example.huihu_app.ui.viewModel.MineViewModel
 fun MineScreen(
     token: String,
     onEditProfile: () -> Unit,
+    onSuggestion: () -> Unit,
     onFoodTrack: () -> Unit,
     onLogout: () -> Unit,
     viewModel: MineViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
@@ -142,6 +143,13 @@ fun MineScreen(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = onSuggestion,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Suggestion")
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = onFoodTrack,

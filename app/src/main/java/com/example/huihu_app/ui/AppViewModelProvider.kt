@@ -14,6 +14,7 @@ import com.example.huihu_app.ui.viewModel.ForumViewModel
 import com.example.huihu_app.ui.viewModel.HomeViewModel
 import com.example.huihu_app.ui.viewModel.MineViewModel
 import com.example.huihu_app.ui.viewModel.NewPersonViewModel
+import com.example.huihu_app.ui.viewModel.SuggestionViewModel
 import com.example.huihu_app.ui.viewModel.TopicDetailViewModel
 
 class AppViewModelProvider {
@@ -72,6 +73,11 @@ class AppViewModelProvider {
                 EditProfileViewModel(
                     container().authRepository,
                     container().topicRepository
+                )
+            }
+            initializer {
+                SuggestionViewModel(
+                    container().suggestionRepository
                 )
             }
         }

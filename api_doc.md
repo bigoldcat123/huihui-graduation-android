@@ -384,6 +384,130 @@ Response (error)
 
 ---
 
+### POST /suggestion
+Create a new suggestion.
+
+Request
+- Method: `POST`
+- Path: `/suggestion`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "content": "Please add this new dish.",
+  "images": [
+    "/static/uploads/suggestion-1.jpg",
+    "/static/uploads/suggestion-2.jpg"
+  ],
+  "type": "ADD_FOOD",
+  "food_id": null,
+  "restaurant_id": 2
+}
+```
+
+Notes
+- `images` is `string[]` in API.
+- Server stores `images` as JSON string in DB.
+- `type` enum: `ADD_FOOD | UPDATE_FOOD | OTHER`.
+- Request field nullability:
+- `content`: `string` (required, non-null)
+- `images`: `string[]` (required, non-null; can be empty array)
+- `type`: `ADD_FOOD | UPDATE_FOOD | OTHER` (required, non-null)
+- `food_id`: `number | null` (optional)
+- `restaurant_id`: `number | null` (optional)
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": 123
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JsonError(...) or JwtError(...)"
+}
+```
+
+---
+
+### GET /suggestion/my
+List all suggestions created by current user.
+
+Request
+- Method: `GET`
+- Path: `/suggestion/my`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body: none
+
+Response item schema (`Suggestion`) nullability
+- `id`: `number` (non-null)
+- `content`: `string` (non-null)
+- `images`: `string[] | null`
+- `type`: `string` (non-null)
+- `status`: `string` (non-null)
+- `food`: `FoodWithTags | null`
+- `restaurant`: `Restaurant | null`
+- `reviewer_id`: `number | null`
+- `review_comment`: `string | null`
+- `user_id`: `number` (non-null)
+- `created_at`: `string` (non-null)
+- `reviewed_at`: `string | null`
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 123,
+      "content": "Please add this new dish.",
+      "images": ["/static/uploads/suggestion-1.jpg", "/static/uploads/suggestion-2.jpg"],
+      "type": "ADD_FOOD",
+      "status": "PENDING",
+      "food": null,
+      "restaurant": {
+        "id": 2,
+        "name": "Sunset Noodle House",
+        "description": "Hand-pulled noodles and light broths.",
+        "location": "Downtown",
+        "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+      },
+      "reviewer_id": null,
+      "review_comment": null,
+      "user_id": 3,
+      "created_at": "2026-02-18T10:00:00+00:00",
+      "reviewed_at": null
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /auth/register
 Request
 - Method: `POST`

@@ -38,6 +38,7 @@ fun HomeScreen(
     onWriteComment: (Int) -> Unit,
     onOpenTopicDetail: (Topic) -> Unit,
     onEditProfile: () -> Unit,
+    onSuggestion: () -> Unit,
     onFoodTrack: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
@@ -89,6 +90,7 @@ fun HomeScreen(
                 else -> MineScreen(
                     token = token,
                     onEditProfile = onEditProfile,
+                    onSuggestion = onSuggestion,
                     onFoodTrack = onFoodTrack,
                     onLogout = viewModel::logout
                 )
