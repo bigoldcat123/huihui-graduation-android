@@ -1,14 +1,20 @@
 package com.example.huihu_app.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -153,104 +160,112 @@ private fun SuggestionItem(
     suggestion: Suggestion,
     onClick: () -> Unit
 ) {
+    val imageUrl = suggestion.food?.image ?: suggestion.images?.firstOrNull()
+    val extraHeightTypes = suggestion.type == "UPDATE_FOOD" || suggestion.type == "OTHER"
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .then(
+                if (extraHeightTypes) Modifier.heightIn(min = 132.dp) else Modifier
+            )
             .clip(RoundedCornerShape(14.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(14.dp)
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Box(
+                modifier = Modifier
+                    .width(78.dp)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(10.dp))
             ) {
-                SuggestionChip(
-                    text = suggestion.status,
-                    isPrimary = true
+                if (!imageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = imageUrl.toAbsoluteImageUrl(),
+                        contentDescription = "suggestion-image",
+                        modifier = Modifier.matchParentSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Surface(
+                        modifier = Modifier.matchParentSize(),
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    ) {}
+                }
+
+                if (suggestion.type.isNotBlank()) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(6.dp),
+                        shape = RoundedCornerShape(100.dp),
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.95f)
+                    ) {
+                        Text(
+                            text = suggestion.type,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = suggestion.food?.name ?: "-",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                SuggestionChip(
-                    text = suggestion.type,
-                    isPrimary = false
+                Text(
+                    text = suggestion.restaurant?.name ?: "-",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = suggestion.content,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
                 Text(
                     text = suggestion.created_at,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
             Text(
-                text = suggestion.content,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Medium
+                text = suggestion.status,
+                modifier = Modifier
+                    .width(72.dp)
+                    .fillMaxHeight()
+                    .wrapContentHeight(Alignment.CenterVertically),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 2
             )
-
-            val food = suggestion.food
-            val restaurant = suggestion.restaurant
-            if (food != null && restaurant != null) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        if (!food.image.isNullOrBlank()) {
-                            AsyncImage(
-                                model = food.image.toAbsoluteImageUrl(),
-                                contentDescription = food.name,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                text = food.name,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = restaurant.name,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
         }
-    }
-}
-
-@Composable
-private fun SuggestionChip(text: String, isPrimary: Boolean) {
-    Surface(
-        color = if (isPrimary) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(100.dp)
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = if (isPrimary) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-        )
     }
 }
 
