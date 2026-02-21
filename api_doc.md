@@ -420,6 +420,159 @@ Response (error)
 
 ---
 
+### GET /restaurant/list
+List restaurants with pagination (root only).
+
+Request
+- Method: `GET`
+- Path: `/restaurant/list`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Query:
+- `page`: number, optional, default `1`
+- `page_size`: number, optional, default `10`, range `1..100`
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 1,
+      "name": "Sunset Noodle House",
+      "description": "Hand-pulled noodles and light broths.",
+      "location": "Downtown",
+      "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### POST /restaurant
+Create a restaurant (root only).
+
+Request
+- Method: `POST`
+- Path: `/restaurant`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "name": "Sunset Noodle House",
+  "description": "Hand-pulled noodles and light broths.",
+  "location": "Downtown",
+  "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+}
+```
+
+Notes
+- `description` is optional (`string | null`).
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 9,
+    "name": "Sunset Noodle House",
+    "description": "Hand-pulled noodles and light broths.",
+    "location": "Downtown",
+    "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
+### POST /restaurant/update
+Update a restaurant (root only).
+
+Request
+- Method: `POST`
+- Path: `/restaurant/update`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "id": 9,
+  "name": "Sunset Noodle House",
+  "description": "Hand-pulled noodles and light broths.",
+  "location": "Downtown",
+  "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+}
+```
+
+Notes
+- `description` is optional (`string | null`).
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "id": 9,
+    "name": "Sunset Noodle House",
+    "description": "Hand-pulled noodles and light broths.",
+    "location": "Downtown",
+    "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(RowNotFound) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### GET /restaurant/foods
 List all foods offered by one restaurant.
 
@@ -563,7 +716,7 @@ Response (success)
       "reviewer_id": null,
       "review_comment": null,
       "user_id": 3,
-      "created_at": "2026-02-18T10:00:00+00:00",
+      "created_at": "2026-02-18",
       "reviewed_at": null
     }
   ]
@@ -617,7 +770,7 @@ Response (success)
     "reviewer_id": null,
     "review_comment": null,
     "user_id": 3,
-    "created_at": "2026-02-18T10:00:00+00:00",
+    "created_at": "2026-02-18",
     "reviewed_at": null
   }
 }
@@ -647,7 +800,7 @@ Request
 - `page`: number, optional, default `1`
 - `page_size`: number, optional, default `10`, range `1..100`
 - `status`: string, optional, enum `PENDING | APPROVED | REJECTED | PREPARING | PROCESSING | FINISHED`
-- `type`: string, optional, enum `ADD_FOOD | UPDATE_FOOD | OTHER`
+- `suggestion_type`: string, optional, enum `ADD_FOOD | UPDATE_FOOD | OTHER`
 
 Access
 - Only root user can access (`user_id = 1`).
@@ -677,7 +830,7 @@ Response (success)
       "reviewer_id": null,
       "review_comment": null,
       "user_id": 3,
-      "created_at": "2026-02-18T10:00:00+00:00",
+      "created_at": "2026-02-18",
       "reviewed_at": null
     }
   ]
