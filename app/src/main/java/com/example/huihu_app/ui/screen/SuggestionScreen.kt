@@ -1,5 +1,6 @@
 package com.example.huihu_app.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -160,110 +161,124 @@ private fun SuggestionItem(
     suggestion: Suggestion,
     onClick: () -> Unit
 ) {
-    val imageUrl = suggestion.food?.image ?: suggestion.images?.firstOrNull()
-    val extraHeightTypes = suggestion.type == "UPDATE_FOOD" || suggestion.type == "OTHER"
+    if (suggestion.food != null) {
+        SuggestionItemWithFood(suggestion = suggestion, onClick = onClick)
+    } else {
+        SuggestionItemWithoutFood(suggestion = suggestion, onClick = onClick)
+    }
+}
 
+@Composable
+private fun SuggestionItemWithFood(
+    suggestion: Suggestion,
+    onClick: () -> Unit
+) {
+    val imageUrl = suggestion.food?.image ?: suggestion.images?.firstOrNull()
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick), horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(modifier = Modifier.fillMaxHeight()) {
+            Box(modifier = Modifier.fillMaxHeight()) {
+                AsyncImage(
+                    model = AppContainer.BASE_URL + imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(10f / 14f),
+                    contentScale = ContentScale.Crop
+                )
+                Text(suggestion.type, Modifier.padding(4.dp).clip(shape = RoundedCornerShape(5.dp)).background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.labelSmall)
+            }
+            Column(Modifier
+                .fillMaxHeight().padding(10.dp),
+                ) {
+                Text(text =  suggestion.food!!.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight(800), modifier = Modifier.padding(bottom = 10.dp))
+                Text(suggestion.restaurant!!.name,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
+                Text(suggestion.content,style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(bottom = 7.dp))
+                Text(suggestion.created_at,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
+            }
+        }
+        Column(Modifier
+            .fillMaxHeight()
+            .padding(vertical = 10.dp)) {
+            Text(suggestion.status)
+        }
+    }
+}
+
+@Composable
+private fun SuggestionItemWithoutFood(
+    suggestion: Suggestion,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .then(
-                if (extraHeightTypes) Modifier.heightIn(min = 132.dp) else Modifier
-            )
+            .heightIn(min = 108.dp)
             .clip(RoundedCornerShape(14.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp)
-                .height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .width(78.dp)
-                    .fillMaxHeight()
-                    .clip(RoundedCornerShape(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (!imageUrl.isNullOrBlank()) {
-                    AsyncImage(
-                        model = imageUrl.toAbsoluteImageUrl(),
-                        contentDescription = "suggestion-image",
-                        modifier = Modifier.matchParentSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Surface(
-                        modifier = Modifier.matchParentSize(),
-                        color = MaterialTheme.colorScheme.surfaceVariant
-                    ) {}
-                }
-
                 if (suggestion.type.isNotBlank()) {
                     Surface(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(6.dp),
                         shape = RoundedCornerShape(100.dp),
                         color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.95f)
                     ) {
                         Text(
                             text = suggestion.type,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
+                } else {
+                    Text(
+                        text = "Suggestion",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-            }
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
                 Text(
-                    text = suggestion.food?.name ?: "-",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = suggestion.restaurant?.name ?: "-",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = suggestion.content,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = suggestion.created_at,
+                    text = suggestion.status,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
             Text(
-                text = suggestion.status,
-                modifier = Modifier
-                    .width(72.dp)
-                    .fillMaxHeight()
-                    .wrapContentHeight(Alignment.CenterVertically),
+                text = suggestion.content,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = suggestion.created_at,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 2
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
