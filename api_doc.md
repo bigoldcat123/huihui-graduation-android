@@ -788,6 +788,51 @@ Response (error)
 
 ---
 
+### GET /suggestion/todo_log/{suggestion_id}/{suggestion_status}
+List todo logs by suggestion id and status.
+
+Request
+- Method: `GET`
+- Path: `/suggestion/todo_log/{suggestion_id}/{suggestion_status}`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Path params:
+- `suggestion_id`: number
+- `suggestion_status`: string (e.g. `ACCEPTED`, `APPROVED`, `PREPARING`, `PROCESSING`, `FINISHED`, `REJECTED`, `PENDING`)
+
+Notes
+- `ACCEPTED` is treated as `APPROVED` for DB filtering.
+- Response data type: `Array<{ content: string; create_time: string }>`
+- If `suggestion_status` is `ACCEPTED` (or `APPROVED`), response returns only one item: the suggestion content.
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "content": "Please add this new dish.",
+      "create_time": "2026-02-18"
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### GET /suggestion/list
 List all suggestions with pagination (root only).
 
@@ -849,6 +894,68 @@ Response (error)
 
 ---
 
+### GET /suggestion/list/todos
+List todo suggestions with pagination (root only).
+
+Request
+- Method: `GET`
+- Path: `/suggestion/list/todos`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Query:
+- `page`: number, optional, default `1`
+- `page_size`: number, optional, default `10`, range `1..100`
+
+Notes
+- Todo statuses are fixed: `APPROVED | PREPARING | PROCESSING | FINISHED`.
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 123,
+      "content": "Please add this new dish.",
+      "images": ["/static/uploads/suggestion-1.jpg", "/static/uploads/suggestion-2.jpg"],
+      "type": "ADD_FOOD",
+      "status": "PROCESSING",
+      "food": null,
+      "restaurant": {
+        "id": 2,
+        "name": "Sunset Noodle House",
+        "description": "Hand-pulled noodles and light broths.",
+        "location": "Downtown",
+        "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+      },
+      "reviewer_id": 1,
+      "review_comment": "accepted",
+      "user_id": 3,
+      "created_at": "2026-02-18",
+      "reviewed_at": "2026-02-19"
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /suggestion/review
 Approve or reject one suggestion (root only).
 
@@ -891,6 +998,56 @@ Response (error)
 {
   "code": 500,
   "message": "PermissionDenied(...) or SqlError(RowNotFound) or JwtError(...)"
+}
+```
+
+---
+
+### POST /suggestion/next_stage
+Move suggestion status to next stage (root only).
+
+Request
+- Method: `POST`
+- Path: `/suggestion/next_stage`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "suggestion_id": 123
+}
+```
+
+Transition rule
+- `APPROVED -> PREPARING`
+- `PREPARING -> PROCESSING`
+- `PROCESSING -> FINISHED`
+
+Notes
+- `PENDING`, `REJECTED`, `FINISHED` cannot move by this API.
+- On success, server also writes one `todo_log` row.
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": "PREPARING"
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(RowNotFound) or SqlError(...) or JwtError(...)"
 }
 ```
 
