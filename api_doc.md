@@ -1053,6 +1053,53 @@ Response (error)
 
 ---
 
+### POST /suggestion/todo_log
+Add a todo log using current suggestion status (root only).
+
+Request
+- Method: `POST`
+- Path: `/suggestion/todo_log`
+- Headers:
+- `Authorization: Bearer <jwt>`
+- Body:
+```json
+{
+  "suggestion_id": 123,
+  "current_status": "PROCESSING",
+  "log_content": "kitchen started trial cooking"
+}
+```
+
+Notes
+- `current_status` is validated against current DB status of this suggestion.
+- `ACCEPTED` is treated as `APPROVED`.
+
+Access
+- Only root user can access (`user_id = 1`).
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": 45
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "PermissionDenied(...) or SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /auth/register
 Request
 - Method: `POST`
