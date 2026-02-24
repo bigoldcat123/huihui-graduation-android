@@ -1536,6 +1536,54 @@ Response (error)
 
 ---
 
+### GET /food/topTags
+Get current user's top 3 most-liked food tags.
+
+Request
+- Method: `GET`
+- Path: `/food/topTags`
+- Headers:
+- `Authorization: Bearer <jwt>`
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 1,
+      "name": "Spicy",
+      "image": "https://..."
+    },
+    {
+      "id": 3,
+      "name": "Popular",
+      "image": "https://..."
+    },
+    {
+      "id": 8,
+      "name": "Noodle",
+      "image": "https://..."
+    }
+  ]
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /food/consecutiveSuggest
 Request
 - Method: `POST`
