@@ -155,7 +155,7 @@ fun FoodReactionBar(
             modifier = Modifier.weight(1f)
         ) {
             Icon(Icons.Filled.Close, contentDescription = null)
-            Text(" Skip")
+            Text(" 跳过")
         }
         OutlinedButton(
             onClick = onDislike,
@@ -163,7 +163,7 @@ fun FoodReactionBar(
             modifier = Modifier.weight(1f)
         ) {
             Icon(Icons.Filled.ThumbDown, contentDescription = null)
-            Text(" Dislike")
+            Text(" 不喜欢")
         }
         Button(
             onClick = onLike,
@@ -171,7 +171,7 @@ fun FoodReactionBar(
             modifier = Modifier.weight(1f)
         ) {
             Icon(Icons.Filled.ThumbUp, contentDescription = null)
-            Text(" Like")
+            Text(" 喜欢")
         }
     }
 }
@@ -263,7 +263,7 @@ fun TodayFoodCard(
             AssistChip(
                 onClick = {},
                 enabled = false,
-                label = { Text("Today's pick") },
+                label = { Text("今日之选") },
                 leadingIcon = { Icon(Icons.Filled.AutoAwesome, contentDescription = null) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -290,7 +290,7 @@ fun TodayFoodActionBar(
             enabled = enabled,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("That's it")
+            Text("就它了")
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -301,14 +301,14 @@ fun TodayFoodActionBar(
                 enabled = enabled,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Change it")
+                Text("换一个")
             }
             OutlinedButton(
                 onClick = onDontLikeIt,
                 enabled = enabled,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Don't like it")
+                Text("不喜欢")
             }
         }
     }
@@ -325,6 +325,6 @@ fun TodayFoodNextAction(
         enabled = enabled,
         modifier = modifier.fillMaxWidth()
     ) {
-        Text("Next Food")
+        Text("下一道")
     }
 }

@@ -45,12 +45,12 @@ fun NewPersonScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Build your profile",
+                text = "建立你的口味画像",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "Round ${if (uiState.currentRound == 0) 1 else uiState.currentRound}/2",
+                text = "第 ${if (uiState.currentRound == 0) 1 else uiState.currentRound} / 2 轮",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -67,7 +67,7 @@ fun NewPersonScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Button(onClick = { viewModel.retry() }) {
-                        Text("Retry")
+                        Text("重试")
                     }
                 }
 
@@ -98,7 +98,7 @@ fun NewPersonScreen(
 
             if (uiState.isCompleted) {
                 Text(
-                    text = "Profile setup completed.",
+                    text = "口味画像已完成。",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -44,12 +44,12 @@ fun SuggestionDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Suggestion Detail") },
+                title = { Text("建议详情") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "返回"
                         )
                     }
                 }
@@ -75,8 +75,8 @@ fun SuggestionDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        MetaChip(label = "Type: ${suggestion.type}")
-                        MetaChip(label = "Status: ${suggestion.status}")
+                        MetaChip(label = "类型：${suggestion.type}")
+                        MetaChip(label = "状态：${suggestion.status}")
                     }
 
                     Text(
@@ -86,13 +86,13 @@ fun SuggestionDetailScreen(
                     )
 
                     Text(
-                        text = "Created: ${suggestion.created_at}",
+                        text = "创建时间：${suggestion.created_at}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     suggestion.reviewed_at?.let {
                         Text(
-                            text = "Reviewed: $it",
+                            text = "审核时间：$it",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -112,7 +112,7 @@ fun SuggestionDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "Review Comment",
+                            text = "审核意见",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -126,7 +126,7 @@ fun SuggestionDetailScreen(
             }
 
             suggestion.restaurant?.let { restaurant ->
-                SectionCard(title = "Restaurant") {
+                SectionCard(title = "餐厅") {
                     Text(text = restaurant.name, style = MaterialTheme.typography.bodyMedium)
                     if (!restaurant.location.isNullOrBlank()) {
                         Text(
@@ -139,7 +139,7 @@ fun SuggestionDetailScreen(
             }
 
             suggestion.food?.let { food ->
-                SectionCard(title = "Food") {
+                SectionCard(title = "美食") {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         if (!food.image.isNullOrBlank()) {
                             AsyncImage(
@@ -167,12 +167,12 @@ fun SuggestionDetailScreen(
 
             val images = suggestion.images.orEmpty()
             if (images.isNotEmpty()) {
-                SectionCard(title = "Images") {
+                SectionCard(title = "图片") {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(images) { image ->
                             AsyncImage(
                                 model = image.toAbsoluteImageUrl(),
-                                contentDescription = "suggestion-image",
+                                contentDescription = "建议图片",
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clip(RoundedCornerShape(8.dp)),

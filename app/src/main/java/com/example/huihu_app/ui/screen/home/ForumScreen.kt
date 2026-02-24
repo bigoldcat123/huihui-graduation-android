@@ -91,11 +91,11 @@ fun ForumScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = error.message ?: "Failed to load topics",
+                    text = error.message ?: "加载帖子失败",
                     color = MaterialTheme.colorScheme.error
                 )
                 Button(onClick = { topics.retry() }) {
-                    Text("Retry")
+                    Text("重试")
                 }
             }
             return@PullToRefreshBox
@@ -146,11 +146,11 @@ fun ForumScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = error.message ?: "Failed to load more",
+                            text = error.message ?: "加载更多失败",
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { topics.retry() }) {
-                            Text("Retry")
+                            Text("重试")
                         }
                     }
                 }
@@ -207,7 +207,7 @@ private fun TopicAuthorAvatar(topic: Topic) {
         if (!profileUrl.isNullOrBlank()) {
             AsyncImage(
                 model = profileUrl.toAbsoluteImageUrl(),
-                contentDescription = topic.user_info?.name ?: "profile",
+                contentDescription = topic.user_info?.name ?: "头像",
                 modifier = Modifier
                     .size(34.dp)
                     .clip(CircleShape),
@@ -240,7 +240,7 @@ private fun TopicItemContent(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = topic.user_info?.name ?: "User ${topic.user_id}",
+            text = topic.user_info?.name ?: "用户 ${topic.user_id}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Medium

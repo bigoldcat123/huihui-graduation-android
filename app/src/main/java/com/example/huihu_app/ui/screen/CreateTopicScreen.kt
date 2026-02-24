@@ -29,8 +29,8 @@ import com.example.huihu_app.ui.viewModel.CreateTopicViewModel
 fun CreateTopicScreen(
     token: String,
     commentToId: Int? = null,
-    screenTitle: String = "Create Topic",
-    submitButtonText: String = "Create Topic",
+    screenTitle: String = "发布帖子",
+    submitButtonText: String = "发布帖子",
     onCreated: () -> Unit,
     viewModel: CreateTopicViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
@@ -60,7 +60,7 @@ fun CreateTopicScreen(
             OutlinedTextField(
                 value = uiState.title,
                 onValueChange = viewModel::updateTitle,
-                label = { Text("Title") },
+                label = { Text("标题") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -68,7 +68,7 @@ fun CreateTopicScreen(
             OutlinedTextField(
                 value = uiState.content,
                 onValueChange = viewModel::updateContent,
-                label = { Text("Content") },
+                label = { Text("内容") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f, fill = false),

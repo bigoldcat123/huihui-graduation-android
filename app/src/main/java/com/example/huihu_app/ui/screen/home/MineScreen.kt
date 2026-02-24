@@ -153,7 +153,7 @@ private fun UserInfoCard(
             } else {
                 AsyncImage(
                     model = profileUrl.toAbsoluteImageUrl(),
-                    contentDescription = userName ?: "profile",
+                    contentDescription = userName ?: "头像",
                     modifier = Modifier
                         .size(72.dp)
                         .clip(CircleShape),
@@ -166,12 +166,12 @@ private fun UserInfoCard(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
-                    text = userName ?: if (isLoading) "Loading..." else "Unknown User",
+                    text = userName ?: if (isLoading) "加载中..." else "未知用户",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Tap to edit profile",
+                    text = "点击编辑资料",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

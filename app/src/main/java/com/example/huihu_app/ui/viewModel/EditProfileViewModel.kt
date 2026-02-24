@@ -72,7 +72,7 @@ class EditProfileViewModel(
                 _uiState.update {
                     it.copy(
                         isUploadingProfile = false,
-                        error = "Failed to read image."
+                        error = "读取图片失败。"
                     )
                 }
                 return@launch
@@ -102,7 +102,7 @@ class EditProfileViewModel(
     fun save(token: String) {
         if (_uiState.value.isSaving || _uiState.value.isUploadingProfile) return
         if (_uiState.value.username.isBlank()) {
-            _uiState.update { it.copy(error = "Username is required.") }
+            _uiState.update { it.copy(error = "用户名不能为空。") }
             return
         }
 

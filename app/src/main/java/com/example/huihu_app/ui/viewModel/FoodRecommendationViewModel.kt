@@ -75,7 +75,7 @@ class FoodRecommendationViewModel(
         _uiState.update {
             it.copy(
                 acceptedFoodId = current.id,
-                feedbackMessage = "Great choice. Enjoy your meal."
+                feedbackMessage = "不错的选择，祝你用餐愉快。"
             )
         }
     }
@@ -106,7 +106,7 @@ class FoodRecommendationViewModel(
             )
         )
         viewModelScope.launch {
-            removeCurrentAndLoadNext(current.id, "Noted. We will refine your recommendations.")
+            removeCurrentAndLoadNext(current.id, "已记录，我们会优化你的推荐。")
         }
     }
 
@@ -141,7 +141,7 @@ class FoodRecommendationViewModel(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = "Failed to load recommendations. Please retry."
+                        error = "加载推荐失败，请重试。"
                     )
                 }
                 return
@@ -158,7 +158,7 @@ class FoodRecommendationViewModel(
                 cachedCount = count,
                 isLoading = false,
                 acceptedFoodId = if (todayFoodId == topFood?.id) todayFoodId else null,
-                feedbackMessage = if (todayFoodId == topFood?.id) "Great choice. Enjoy your meal." else it.feedbackMessage
+                feedbackMessage = if (todayFoodId == topFood?.id) "不错的选择，祝你用餐愉快。" else it.feedbackMessage
             )
         }
 

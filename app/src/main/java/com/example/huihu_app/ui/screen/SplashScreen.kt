@@ -8,5 +8,5 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SplashScreen(modifier: Modifier = Modifier) {
 
-    Text("SPLASH")
+    Text("启动中")
 }

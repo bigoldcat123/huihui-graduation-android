@@ -50,7 +50,7 @@ fun TopicImageUploadSection(
                 picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
         ) {
-            Text("Select Images")
+            Text("选择图片")
         }
 
         if (selectedImages.isNotEmpty()) {
@@ -75,7 +75,7 @@ fun TopicImageUploadSection(
                             IconButton(onClick = { onRemoveImage(image.uri) }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
-                                    contentDescription = "Remove image"
+                                    contentDescription = "移除图片"
                                 )
                             }
                             if (image.isUploading) {
@@ -85,7 +85,7 @@ fun TopicImageUploadSection(
                                 )
                             } else if (image.uploadedUrl == null) {
                                 Text(
-                                    text = "Upload failed",
+                                    text = "上传失败",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -98,7 +98,7 @@ fun TopicImageUploadSection(
 
         if (isUploadingImages) {
             Text(
-                text = "Uploading images...",
+                text = "图片上传中...",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

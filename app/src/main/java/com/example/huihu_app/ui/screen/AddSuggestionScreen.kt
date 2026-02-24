@@ -63,12 +63,12 @@ fun AddSuggestionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Suggestion") },
+                title = { Text("添加建议") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "返回"
                         )
                     }
                 }
@@ -83,7 +83,7 @@ fun AddSuggestionScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Type", style = MaterialTheme.typography.labelLarge)
+            Text("类型", style = MaterialTheme.typography.labelLarge)
             SuggestionTypeSelector(
                 selected = uiState.type,
                 onSelect = viewModel::updateType
@@ -92,7 +92,7 @@ fun AddSuggestionScreen(
             OutlinedTextField(
                 value = uiState.content,
                 onValueChange = viewModel::updateContent,
-                label = { Text("Content") },
+                label = { Text("内容") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 4
             )
@@ -148,7 +148,7 @@ fun AddSuggestionScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Submit Suggestion")
+                    Text("提交建议")
                 }
             }
         }
@@ -190,7 +190,7 @@ private fun RestaurantSelector(
             value = selectedName,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Restaurant") },
+            label = { Text("餐厅") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
@@ -202,13 +202,13 @@ private fun RestaurantSelector(
         ) {
             if (isLoading) {
                 DropdownMenuItem(
-                    text = { Text("Loading...") },
+                    text = { Text("加载中...") },
                     onClick = {}
                 )
             } else {
                 if (selectedRestaurantId != null) {
                     DropdownMenuItem(
-                        text = { Text("Clear") },
+                        text = { Text("清空") },
                         onClick = {
                             onSelectRestaurant(null)
                             expanded = false
@@ -248,7 +248,7 @@ private fun FoodSelector(
             value = selectedName,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Food") },
+            label = { Text("美食") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
@@ -260,13 +260,13 @@ private fun FoodSelector(
         ) {
             if (isLoading) {
                 DropdownMenuItem(
-                    text = { Text("Loading...") },
+                    text = { Text("加载中...") },
                     onClick = {}
                 )
             } else {
                 if (selectedFoodId != null) {
                     DropdownMenuItem(
-                        text = { Text("Clear") },
+                        text = { Text("清空") },
                         onClick = {
                             onSelectFood(null)
                             expanded = false

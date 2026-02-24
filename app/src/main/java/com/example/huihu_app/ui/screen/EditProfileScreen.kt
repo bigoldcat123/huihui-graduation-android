@@ -72,12 +72,12 @@ fun EditProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Profile") },
+                title = { Text("编辑资料") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "返回"
                         )
                     }
                 }
@@ -99,7 +99,7 @@ fun EditProfileScreen(
                     uiState.profilePreviewUri != null -> {
                         AsyncImage(
                             model = uiState.profilePreviewUri,
-                            contentDescription = "Profile",
+                            contentDescription = "头像",
                             modifier = Modifier
                                 .size(92.dp)
                                 .clip(CircleShape),
@@ -110,7 +110,7 @@ fun EditProfileScreen(
                     !uiState.profileUrl.isNullOrBlank() -> {
                         AsyncImage(
                             model = uiState.profileUrl!!.toAbsoluteImageUrl(),
-                            contentDescription = "Profile",
+                            contentDescription = "头像",
                             modifier = Modifier
                                 .size(92.dp)
                                 .clip(CircleShape),
@@ -136,13 +136,13 @@ fun EditProfileScreen(
                 },
                 enabled = !uiState.isUploadingProfile
             ) {
-                Text(if (uiState.isUploadingProfile) "Uploading..." else "Change Profile Image")
+                Text(if (uiState.isUploadingProfile) "上传中..." else "更换头像")
             }
 
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
-                label = { Text("Username") },
+                label = { Text("用户名") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -165,7 +165,7 @@ fun EditProfileScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Save")
+                    Text("保存")
                 }
             }
         }

@@ -84,12 +84,12 @@ fun TopicDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Topic Detail") },
+                title = { Text("帖子详情") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "返回"
                         )
                     }
                 },
@@ -97,7 +97,7 @@ fun TopicDetailScreen(
                     IconButton(onClick = { onWriteComment(topic.id) }) {
                         Icon(
                             imageVector = Icons.Outlined.ChatBubbleOutline,
-                            contentDescription = "Write comment"
+                            contentDescription = "写评论"
                         )
                     }
                 }
@@ -124,7 +124,7 @@ fun TopicDetailScreen(
             }
             item {
                 Text(
-                    text = "Comments (${uiState.comments.size})",
+                    text = "评论（${uiState.comments.size}）",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -150,11 +150,11 @@ fun TopicDetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = uiState.error ?: "Failed to load comments",
+                            text = uiState.error ?: "加载评论失败",
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { viewModel.loadComments(token, topic.id) }) {
-                            Text("Retry")
+                            Text("重试")
                         }
                     }
                 }
@@ -207,7 +207,7 @@ private fun TopicCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = topic.user_info?.name ?: "User ${topic.user_id}",
+                    text = topic.user_info?.name ?: "用户 ${topic.user_id}",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -311,7 +311,7 @@ private fun TopicProfileAvatar(profileUrl: String?, username: String?) {
     if (!profileUrl.isNullOrBlank()) {
         AsyncImage(
             model = profileUrl.toAbsoluteImageUrl(),
-            contentDescription = username ?: "profile",
+            contentDescription = username ?: "头像",
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape),

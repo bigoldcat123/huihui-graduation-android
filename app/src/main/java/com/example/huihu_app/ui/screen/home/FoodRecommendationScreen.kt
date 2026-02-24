@@ -42,7 +42,7 @@ fun FoodRecommendationScreen(
     ) {
         if (uiState.isRefilling) {
             Text(
-                text = "Refreshing recommendations...",
+                text = "正在刷新推荐...",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -60,17 +60,17 @@ fun FoodRecommendationScreen(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Button(onClick = { viewModel.retry() }) {
-                    Text("Retry")
+                    Text("重试")
                 }
             }
 
             uiState.currentFood == null -> {
                 Text(
-                    text = "No recommendations right now.",
+                    text = "当前暂无推荐。",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Button(onClick = { viewModel.load(token = token, force = true) }) {
-                    Text("Refresh recommendations")
+                    Text("刷新推荐")
                 }
             }
 
@@ -110,14 +110,14 @@ fun FoodRecommendationScreen(
         }
 
         Text(
-            text = "Cached foods: ${uiState.cachedCount}",
+            text = "缓存菜品：${uiState.cachedCount}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         if (uiState.error != null && uiState.currentFood != null) {
             Text(
-                text = "Network issue while syncing: ${uiState.error}",
+                text = "同步网络异常：${uiState.error}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.error
             )

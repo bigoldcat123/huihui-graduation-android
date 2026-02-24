@@ -67,7 +67,7 @@ class CreateTopicViewModel(
         viewModelScope.launch {
             val parts = newUris.mapNotNull { uriToPart(contentResolver, it) }
             if (parts.isEmpty()) {
-                markUploadFailed(newUris, "Failed to read selected images.")
+                markUploadFailed(newUris, "读取所选图片失败。")
                 return@launch
             }
 
@@ -93,7 +93,7 @@ class CreateTopicViewModel(
                 val hasMissing = updated.any { !it.isUploading && it.uploadedUrl == null }
                 state.copy(
                     selectedImages = updated,
-                    error = if (hasMissing) "Some images failed to upload. Please reselect or remove them." else null
+                    error = if (hasMissing) "部分图片上传失败，请重新选择或移除。" else null
                 )
             }
         }
@@ -113,15 +113,15 @@ class CreateTopicViewModel(
         val state = _uiState.value
         if (state.isSubmitting) return
         if (state.title.isBlank() || state.content.isBlank()) {
-            _uiState.update { it.copy(error = "Title and content are required.") }
+            _uiState.update { it.copy(error = "标题和内容不能为空。") }
             return
         }
         if (state.isUploadingImages) {
-            _uiState.update { it.copy(error = "Please wait for image uploads to finish.") }
+            _uiState.update { it.copy(error = "请等待图片上传完成。") }
             return
         }
         if (state.hasPendingUpload) {
-            _uiState.update { it.copy(error = "Some images are not uploaded yet. Remove them or try selecting again.") }
+            _uiState.update { it.copy(error = "部分图片尚未上传，请移除或重新选择。") }
             return
         }
 

@@ -30,18 +30,18 @@ fun LoginForm(
             OutlinedTextField(
                 value = userName,
                 onValueChange = {userName = it},
-                label = { Text("Username") }
+                label = { Text("用户名") }
             )
             OutlinedTextField(
                 value = password,
                 onValueChange = {password = it},
-                label = { Text("Password") }
+                label = { Text("密码") }
             )
             Button(onClick = {onLogin(userName,password)}, enabled = !uiState.isLoading) {
-                Text("Login")
+                Text("登录")
             }
             TextButton(onClick = onRegister, enabled = !uiState.isLoading) {
-                Text("Create account")
+                Text("创建账号")
             }
             if (uiState.error != null) {
                 Text(uiState.error)
@@ -66,26 +66,26 @@ fun RegisterForm(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") }
+                label = { Text("邮箱") }
             )
             OutlinedTextField(
                 value = userName,
                 onValueChange = { userName = it },
-                label = { Text("Username") }
+                label = { Text("用户名") }
             )
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") }
+                label = { Text("密码") }
             )
             Button(
                 onClick = { onRegister(email, userName, password) },
                 enabled = !uiState.isLoading
             ) {
-                Text("Register")
+                Text("注册")
             }
             TextButton(onClick = onLogin, enabled = !uiState.isLoading) {
-                Text("Already have an account? Login")
+                Text("已有账号？去登录")
             }
             if (uiState.error != null) {
                 Text(uiState.error)

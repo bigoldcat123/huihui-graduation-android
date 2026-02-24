@@ -54,9 +54,9 @@ fun HomeScreen(
                     title = {
                         Text(
                             when (uiState.selectedTab) {
-                                0 -> "Forum"
-                                1 -> "Today's Food!"
-                                else -> "Mine"
+                                0 -> "论坛"
+                                1 -> "今日吃什么"
+                                else -> "我的"
                             }
                         )
                     }
@@ -72,7 +72,7 @@ fun HomeScreen(
         floatingActionButton = {
             if (uiState.selectedTab == 0) {
                 FloatingActionButton(onClick = onCreateTopic) {
-                    Icon(Icons.Filled.Add, contentDescription = "Create topic")
+                    Icon(Icons.Filled.Add, contentDescription = "发帖")
                 }
             }
         }
@@ -114,20 +114,20 @@ private fun HomeBottomBar(
         NavigationBarItem(
             selected = selectedTab == 0,
             onClick = { onTabSelected(0) },
-            icon = { Icon(Icons.Filled.Forum, contentDescription = "Forum") },
-            label = { Text("Forum") }
+            icon = { Icon(Icons.Filled.Forum, contentDescription = "论坛") },
+            label = { Text("论坛") }
         )
         NavigationBarItem(
             selected = selectedTab == 1,
             onClick = { onTabSelected(1) },
-            icon = { Icon(Icons.Filled.Restaurant, contentDescription = "Food Recommendation") },
-            label = { Text("Food") }
+            icon = { Icon(Icons.Filled.Restaurant, contentDescription = "美食推荐") },
+            label = { Text("美食") }
         )
         NavigationBarItem(
             selected = selectedTab == 2,
             onClick = { onTabSelected(2) },
-            icon = { Icon(Icons.Filled.Person, contentDescription = "Mine") },
-            label = { Text("Mine") }
+            icon = { Icon(Icons.Filled.Person, contentDescription = "我的") },
+            label = { Text("我的") }
         )
     }
 }

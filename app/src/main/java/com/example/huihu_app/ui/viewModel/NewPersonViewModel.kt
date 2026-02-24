@@ -120,7 +120,7 @@ class NewPersonViewModel(
                         completeOnboarding()
                     } else {
                         _uiState.update {
-                            it.copy(error = "No foods returned for this round. Tap retry.")
+                            it.copy(error = "本轮未返回菜品，请重试。")
                         }
                     }
                 }

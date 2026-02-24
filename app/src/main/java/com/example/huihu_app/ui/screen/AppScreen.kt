@@ -163,8 +163,8 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                     CreateTopicScreen(
                         token = authToken!!,
                         commentToId = nav.commentToId,
-                        screenTitle = "Write Comment",
-                        submitButtonText = "Post Comment",
+                        screenTitle = "写评论",
+                        submitButtonText = "发布评论",
                         onCreated = {
                             if (backStack.size > 1) {
                                 backStack.removeLast()
