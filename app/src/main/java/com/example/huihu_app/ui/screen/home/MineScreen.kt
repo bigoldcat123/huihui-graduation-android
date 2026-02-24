@@ -1,6 +1,8 @@
 package com.example.huihu_app.ui.screen.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -79,61 +89,17 @@ fun MineScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onEditProfile),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (uiState.user?.profile.isNullOrBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.onSurfaceVariant)
-                                .alpha(0.2f)
-                        )
-                    } else {
-                        AsyncImage(
-                            model = uiState.user?.profile?.toAbsoluteImageUrl(),
-                            contentDescription = uiState.user?.name ?: "profile",
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = uiState.user?.name
-                                ?: if (uiState.isLoading) "Loading..." else "Unknown User",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Tap to edit profile",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
+            UserInfoCard(
+                userName = uiState.user?.name,
+                profileUrl = uiState.user?.profile,
+                isLoading = uiState.isLoading,
+                onClick = onEditProfile
+            )
 
             StatsCard(
                 decisionSuccessCount = uiState.likeCount,
                 decisionFailureCount = uiState.dislikeCount,
+                tags = uiState.topTagNames
             )
 
             if (uiState.error != null) {
@@ -146,33 +112,69 @@ fun MineScreen(
             if (uiState.isLoading && uiState.user == null) {
                 CircularProgressIndicator()
             }
+            ListButtonCard(
+                onSuggestion = onSuggestion,
+                onFoodTrack = onFoodTrack,
+                onLogout = onLogout
+            )
         }
+    }
+}
 
-        Column(
+@Composable
+private fun UserInfoCard(
+    userName: String?,
+    profileUrl: String?,
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Row(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
+                .padding(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onSuggestion,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Suggestion")
+            if (profileUrl.isNullOrBlank()) {
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onSurfaceVariant)
+                        .alpha(0.2f)
+                )
+            } else {
+                AsyncImage(
+                    model = profileUrl.toAbsoluteImageUrl(),
+                    contentDescription = userName ?: "profile",
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onFoodTrack,
-                modifier = Modifier.fillMaxWidth()
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Text("Food Track")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onLogout,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Logout")
+                Text(
+                    text = userName ?: if (isLoading) "Loading..." else "Unknown User",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Tap to edit profile",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -184,10 +186,12 @@ private fun String.toAbsoluteImageUrl(): String {
     val path = if (startsWith("/")) this else "/$this"
     return host + path
 }
+
 @Composable
 fun StatsCard(
     decisionSuccessCount: Int,
     decisionFailureCount: Int,
+    tags: List<String>
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -240,7 +244,8 @@ fun StatsCard(
             // 成功率
             if (decisionSuccessCount + decisionFailureCount > 0) {
                 Spacer(modifier = Modifier.height(16.dp))
-                val successRate = (decisionSuccessCount.toFloat() / (decisionSuccessCount + decisionFailureCount) * 100).toInt()
+                val successRate =
+                    (decisionSuccessCount.toFloat() / (decisionSuccessCount + decisionFailureCount) * 100).toInt()
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
@@ -258,7 +263,33 @@ fun StatsCard(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "$successRate%",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF4CAF50)
+                        )
+                    }
+                }
+            }
+            if (tags.size == 3) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "个人口味偏好",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${tags[0]} ${tags[1]} ${tags[2]}",
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4CAF50)
                         )
@@ -266,8 +297,10 @@ fun StatsCard(
                 }
             }
         }
+
     }
 }
+
 /**
  * 统计项
  */
@@ -278,7 +311,7 @@ fun StatItem(label: String, value: String, color: Color) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             color = color,
             fontWeight = FontWeight.Bold
         )
@@ -290,34 +323,67 @@ fun StatItem(label: String, value: String, color: Color) {
         )
     }
 }
-@Composable
-private fun DecisionStatPill(
-    label: String,
-    value: Int,
-    isPositive: Boolean
-) {
-    val background = if (isPositive) {
-        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.8f)
-    } else {
-        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.55f)
-    }
-    val content = if (isPositive) {
-        MaterialTheme.colorScheme.onTertiaryContainer
-    } else {
-        MaterialTheme.colorScheme.onErrorContainer
-    }
 
-    Surface(
-        shape = RoundedCornerShape(999.dp),
-        color = background
+@Composable
+fun ListButtonCard(
+    modifier: Modifier = Modifier,
+    onSuggestion: () -> Unit,
+    onFoodTrack: () -> Unit,
+    onLogout: () -> Unit,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),  // 圆角
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)  // 白色背景
     ) {
-        Text(
-            text = "$label $value",
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = content,
-            fontWeight = FontWeight.Medium
+        ListButton(
+            text = "建议",
+            icon = { Image(Icons.Filled.AcUnit, contentDescription = null) },
+            onClick = onSuggestion
         )
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(color = MaterialTheme.colorScheme.primary.copy(0.3f))
+        )
+        ListButton(
+            text = "食物轨迹",
+            icon = { Image(Icons.Filled.TrackChanges, contentDescription = null) },
+            onClick = onFoodTrack
+        )
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(color = MaterialTheme.colorScheme.primary.copy(0.3f))
+        )
+        ListButton(
+            text = "退出登录",
+            icon = { Image(Icons.AutoMirrored.Filled.Logout, contentDescription = null) },
+            onClick = onLogout
+        )
+    }
+}
+
+@Composable
+fun ListButton(modifier: Modifier = Modifier, text: String, icon: @Composable () -> Unit,onClick: () -> Unit) {
+    Row(
+        modifier
+            .clickable(onClick = onClick)
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
+            .padding(start = 20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row() {
+            icon()
+            Spacer(Modifier.width(10.dp))
+            Text(text)
+        }
+        Image(Icons.Filled.ChevronRight, contentDescription = null, alpha = 0.3f)
     }
 }
 
