@@ -1,6 +1,7 @@
 package com.example.huihu_app.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -106,7 +108,9 @@ private fun HomeBottomBar(
     selectedTab: Int,
     onTabSelected: (Int) -> Unit
 ) {
-    NavigationBar {
+    NavigationBar(
+        windowInsets = WindowInsets(top = 0, bottom = 0)
+    ) {
         NavigationBarItem(
             selected = selectedTab == 0,
             onClick = { onTabSelected(0) },

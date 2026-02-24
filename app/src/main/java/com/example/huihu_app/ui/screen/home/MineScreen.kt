@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -80,7 +82,8 @@ fun MineScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = onEditProfile),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Row(
                     modifier = Modifier
@@ -221,9 +224,6 @@ private fun LikeDislikeCard(
                 }
 
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "个人口味偏好",
-                    )
                     Text(
                         text = if (topTagNames.isEmpty()) "暂无数据" else topTagNames.joinToString(" · "),
                         style = MaterialTheme.typography.bodyMedium
