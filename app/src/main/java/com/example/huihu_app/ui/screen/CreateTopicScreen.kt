@@ -56,15 +56,6 @@ fun CreateTopicScreen(
                 text = screenTitle,
                 style = MaterialTheme.typography.titleLarge
             )
-
-            OutlinedTextField(
-                value = uiState.title,
-                onValueChange = viewModel::updateTitle,
-                label = { Text("标题") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
             OutlinedTextField(
                 value = uiState.content,
                 onValueChange = viewModel::updateContent,

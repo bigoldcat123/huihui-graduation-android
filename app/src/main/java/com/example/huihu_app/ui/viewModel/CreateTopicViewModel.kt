@@ -14,6 +14,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+private const val DEFAULT_TOPIC_TITLE = "默认标题"
+
 data class SelectedImage(
     val uri: Uri,
     val uploadedUrl: String? = null,
@@ -112,8 +114,8 @@ class CreateTopicViewModel(
     fun submit(token: String, commentToId: Int? = null) {
         val state = _uiState.value
         if (state.isSubmitting) return
-        if (state.title.isBlank() || state.content.isBlank()) {
-            _uiState.update { it.copy(error = "标题和内容不能为空。") }
+        if (state.content.isBlank()) {
+            _uiState.update { it.copy(error = "内容不能为空。") }
             return
         }
         if (state.isUploadingImages) {
@@ -126,11 +128,12 @@ class CreateTopicViewModel(
         }
 
         _uiState.update { it.copy(isSubmitting = true, error = null) }
+        val effectiveTitle = state.title.trim().ifBlank { DEFAULT_TOPIC_TITLE }
 
         viewModelScope.launch {
             val createRes = topicRepository.createTopic(
                 token = token,
-                title = state.title,
+                title = effectiveTitle,
                 content = state.content,
                 images = state.selectedImages.mapNotNull { it.uploadedUrl },
                 commentToId = commentToId

@@ -241,13 +241,9 @@ private fun TopicItemContent(
     ) {
         Text(
             text = topic.user_info?.name ?: "用户 ${topic.user_id}",
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = topic.title,
-            style = MaterialTheme.typography.titleMedium
         )
         TopicTextContent(content = topic.content)
         TopicImagesStrip(images = topic.images.orEmpty(), title = topic.title)
