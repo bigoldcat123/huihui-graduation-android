@@ -30,7 +30,9 @@ class AppContainer(context: Context) {
             context,
             AppDatabase::class.java,
             "huihu_app.db"
-        ).build()
+        )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
     }
 
     val authSource by lazy {

@@ -12,6 +12,7 @@ data class FoodCacheEntity(
     val name: String,
     val description: String,
     val image: String,
+    val price: Double? = null,
     val createdAt: Long
 )
 
@@ -22,6 +23,7 @@ fun Food.toEntity(now: Long = System.currentTimeMillis()): FoodCacheEntity =
         name = name,
         description = description,
         image = image,
+        price = price,
         createdAt = now
     )
 
@@ -31,5 +33,6 @@ fun FoodCacheEntity.toFood(): Food =
         restaurant_id = restaurantId,
         name = name,
         description = description,
-        image = image
+        image = image,
+        price = price
     )

@@ -133,6 +133,15 @@ fun FoodCardContent(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
+            val priceText = food.price?.let { price ->
+                if (price % 1.0 == 0.0) "¥${price.toInt()}" else "¥$price"
+            } ?: "待定"
+            Text(
+                text = "价格：$priceText",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

@@ -8,5 +8,6 @@ data class Food(
     val restaurant_id: Int,
     val name: String,
     val description: String,
-    val image: String
+    val image: String,
+    val price: Double? = null
 )

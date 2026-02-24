@@ -594,7 +594,8 @@ Response (success)
     {
       "id": 10,
       "name": "Spicy Chicken",
-      "image": "https://cdn.example.com/foods/spicy-chicken.jpg"
+      "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+      "price": 12.5
     }
   ]
 }
@@ -1246,7 +1247,8 @@ Response (success)
       "restaurant_id": 2,
       "name": "Spicy Chicken",
       "description": "...",
-      "image": "https://..."
+      "image": "https://...",
+      "price": 12.5
     }
   ]
 }
@@ -1299,6 +1301,7 @@ Response (success)
       "name": "Spicy Chicken",
       "description": "...",
       "image": "https://...",
+      "price": 12.5,
       "tags": [
         {
           "id": 1,
@@ -1343,6 +1346,7 @@ Request
   "name": "Spicy Chicken",
   "description": "Hot and crispy.",
   "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+  "price": 12.5,
   "tag_ids": [1, 3]
 }
 ```
@@ -1365,6 +1369,7 @@ Response (success)
     "name": "Spicy Chicken",
     "description": "Hot and crispy.",
     "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+    "price": 12.5,
     "tags": [
       {
         "id": 1,
@@ -1409,6 +1414,7 @@ Request
   "name": "Spicy Chicken (Updated)",
   "description": "Hot and crispy, updated recipe.",
   "image": "https://cdn.example.com/foods/spicy-chicken-v2.jpg",
+  "price": 13.0,
   "tag_ids": [1, 4]
 }
 ```
@@ -1430,6 +1436,7 @@ Response (success)
     "name": "Spicy Chicken (Updated)",
     "description": "Hot and crispy, updated recipe.",
     "image": "https://cdn.example.com/foods/spicy-chicken-v2.jpg",
+    "price": 13.0,
     "tags": [
       {
         "id": 1,
@@ -1608,6 +1615,7 @@ Response (success)
       "name": "Spicy Chicken",
       "description": "Hot and crispy.",
       "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+      "price": 12.5,
       "restaurant": {
         "id": 2,
         "name": "Sunset Noodle House",
@@ -1662,7 +1670,8 @@ Response (success)
       "restaurant_id": 2,
       "name": "Spicy Chicken",
       "description": "...",
-      "image": "https://..."
+      "image": "https://...",
+      "price": 12.5
     }
   ]
 }

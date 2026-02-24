@@ -2,12 +2,15 @@ package com.example.huihu_app.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
@@ -48,6 +51,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
 
     if (!backStack.isEmpty()) {
         NavDisplay(
+            modifier = Modifier.background(color= MaterialTheme.colorScheme.primaryContainer),
             backStack = backStack,
             entryProvider = entryProvider {
                 entry<Nav.Login>() {
