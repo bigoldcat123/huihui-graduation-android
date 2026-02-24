@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.huihu_app.data.model.CurrentUser
 import com.example.huihu_app.data.repository.AuthRepository
+import com.example.huihu_app.data.repository.FoodRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,12 +12,15 @@ import kotlinx.coroutines.launch
 
 data class MineUiState(
     val user: CurrentUser? = null,
+    val likeCount: Int = 0,
+    val dislikeCount: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 class MineViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val foodRepository: FoodRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MineUiState())
     val uiState = _uiState.asStateFlow()
@@ -26,14 +30,25 @@ class MineViewModel(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            val response = authRepository.me(token)
-            if (!response.isSuccess()) {
-                _uiState.update { it.copy(isLoading = false, error = response.message) }
+            val meResponse = authRepository.me(token)
+            val countResponse = foodRepository.reactionCount(token)
+
+            if (!meResponse.isSuccess()) {
+                _uiState.update { it.copy(isLoading = false, error = meResponse.message) }
                 return@launch
             }
+
+            val reactionCount = if (countResponse.isSuccess()) {
+                countResponse.data
+            } else {
+                null
+            }
+
             _uiState.update {
                 it.copy(
-                    user = response.data,
+                    user = meResponse.data,
+                    likeCount = reactionCount?.like ?: 0,
+                    dislikeCount = reactionCount?.dislike ?: 0,
                     isLoading = false,
                     error = null
                 )

@@ -1501,6 +1501,41 @@ Response (error)
 
 ---
 
+### GET /food/recommendation/reaction/count
+Count current user's like/dislike operations.
+
+Request
+- Method: `GET`
+- Path: `/food/recommendation/reaction/count`
+- Headers:
+- `Authorization: Bearer <jwt>`
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "like": 12,
+    "dislike": 3
+  }
+}
+```
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /food/consecutiveSuggest
 Request
 - Method: `POST`

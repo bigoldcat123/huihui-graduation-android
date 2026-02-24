@@ -126,6 +126,11 @@ fun MineScreen(
                 }
             }
 
+            LikeDislikeCard(
+                likeCount = uiState.likeCount,
+                dislikeCount = uiState.dislikeCount
+            )
+
             if (uiState.error != null) {
                 Text(
                     text = uiState.error ?: "",
@@ -173,4 +178,55 @@ private fun String.toAbsoluteImageUrl(): String {
     val host = AppContainer.BASE_URL.trimEnd('/')
     val path = if (startsWith("/")) this else "/$this"
     return host + path
+}
+
+@Composable
+private fun LikeDislikeCard(
+    likeCount: Int,
+    dislikeCount: Int
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = "Like",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = likeCount.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = "Dislike",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = dislikeCount.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
 }

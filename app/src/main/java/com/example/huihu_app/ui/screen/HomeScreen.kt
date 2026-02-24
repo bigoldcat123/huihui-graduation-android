@@ -47,17 +47,19 @@ fun HomeScreen(
     val state = rememberLazyListState()
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        when (uiState.selectedTab) {
-                            0 -> "Forum"
-                            1 -> "Today's Food!"
-                            else -> "Mine"
-                        }
-                    )
-                }
-            )
+            if (uiState.selectedTab != 2) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            when (uiState.selectedTab) {
+                                0 -> "Forum"
+                                1 -> "Today's Food!"
+                                else -> "Mine"
+                            }
+                        )
+                    }
+                )
+            }
         },
         bottomBar = {
             HomeBottomBar(

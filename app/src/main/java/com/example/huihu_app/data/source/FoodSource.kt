@@ -3,6 +3,7 @@ package com.example.huihu_app.data.source
 import com.example.huihu_app.data.model.ApiResponse
 import com.example.huihu_app.data.model.ConsecutiveSuggestRequest
 import com.example.huihu_app.data.model.Food
+import com.example.huihu_app.data.model.FoodReactionCount
 import com.example.huihu_app.data.model.FoodReactionRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,4 +27,9 @@ interface FoodSource {
         @Header("Authorization") token: String,
         @Body request: FoodReactionRequest
     ): ApiResponse<Unit?>
+
+    @GET("/food/recommendation/reaction/count")
+    suspend fun reactionCount(
+        @Header("Authorization") token: String
+    ): ApiResponse<FoodReactionCount>
 }

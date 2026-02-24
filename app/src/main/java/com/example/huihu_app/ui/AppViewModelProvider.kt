@@ -67,7 +67,8 @@ class AppViewModelProvider {
             }
             initializer {
                 MineViewModel(
-                    container().authRepository
+                    container().authRepository,
+                    container().foodRepository
                 )
             }
             initializer {
