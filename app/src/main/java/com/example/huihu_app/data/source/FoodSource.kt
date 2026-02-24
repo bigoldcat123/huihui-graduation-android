@@ -5,6 +5,7 @@ import com.example.huihu_app.data.model.ConsecutiveSuggestRequest
 import com.example.huihu_app.data.model.Food
 import com.example.huihu_app.data.model.FoodReactionCount
 import com.example.huihu_app.data.model.FoodReactionRequest
+import com.example.huihu_app.data.model.FoodTag
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -32,4 +33,9 @@ interface FoodSource {
     suspend fun reactionCount(
         @Header("Authorization") token: String
     ): ApiResponse<FoodReactionCount>
+
+    @GET("/food/topTags")
+    suspend fun topTags(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<FoodTag>>
 }

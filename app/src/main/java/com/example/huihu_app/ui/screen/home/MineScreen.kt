@@ -129,7 +129,8 @@ fun MineScreen(
 
             LikeDislikeCard(
                 likeCount = uiState.likeCount,
-                dislikeCount = uiState.dislikeCount
+                dislikeCount = uiState.dislikeCount,
+                topTagNames = uiState.topTagNames
             )
 
             if (uiState.error != null) {
@@ -184,7 +185,8 @@ private fun String.toAbsoluteImageUrl(): String {
 @Composable
 private fun LikeDislikeCard(
     likeCount: Int,
-    dislikeCount: Int
+    dislikeCount: Int,
+    topTagNames: List<String>
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -221,10 +223,13 @@ private fun LikeDislikeCard(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "个人口味偏好",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = if (topTagNames.isEmpty()) "暂无数据" else topTagNames.joinToString(" · "),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
+
             }
         }
     }

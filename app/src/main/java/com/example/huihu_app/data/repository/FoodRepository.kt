@@ -5,6 +5,7 @@ import com.example.huihu_app.data.model.ConsecutiveSuggestRequest
 import com.example.huihu_app.data.model.Food
 import com.example.huihu_app.data.model.FoodReactionCount
 import com.example.huihu_app.data.model.FoodReactionRequest
+import com.example.huihu_app.data.model.FoodTag
 import com.example.huihu_app.data.local.dao.FoodCacheDao
 import com.example.huihu_app.data.local.entity.toEntity
 import com.example.huihu_app.data.local.entity.toFood
@@ -62,6 +63,13 @@ class FoodRepository(
     suspend fun reactionCount(token: String): ApiResponse<FoodReactionCount> =
         runCatching {
             foodSource.reactionCount(token = "Bearer $token")
+        }.getOrElse {
+            return ApiResponse.from(it)
+        }
+
+    suspend fun topTags(token: String): ApiResponse<List<FoodTag>> =
+        runCatching {
+            foodSource.topTags(token = "Bearer $token")
         }.getOrElse {
             return ApiResponse.from(it)
         }

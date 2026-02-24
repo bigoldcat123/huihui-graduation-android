@@ -14,6 +14,7 @@ data class MineUiState(
     val user: CurrentUser? = null,
     val likeCount: Int = 0,
     val dislikeCount: Int = 0,
+    val topTagNames: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -32,6 +33,7 @@ class MineViewModel(
         viewModelScope.launch {
             val meResponse = authRepository.me(token)
             val countResponse = foodRepository.reactionCount(token)
+            val topTagsResponse = foodRepository.topTags(token)
 
             if (!meResponse.isSuccess()) {
                 _uiState.update { it.copy(isLoading = false, error = meResponse.message) }
@@ -43,12 +45,21 @@ class MineViewModel(
             } else {
                 null
             }
+            val topTagNames = if (topTagsResponse.isSuccess()) {
+                topTagsResponse.data.orEmpty()
+                    .take(3)
+                    .map { it.name.trim() }
+                    .filter { it.isNotBlank() }
+            } else {
+                emptyList()
+            }
 
             _uiState.update {
                 it.copy(
                     user = meResponse.data,
                     likeCount = reactionCount?.like ?: 0,
                     dislikeCount = reactionCount?.dislike ?: 0,
+                    topTagNames = topTagNames,
                     isLoading = false,
                     error = null
                 )
