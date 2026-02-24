@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AcUnit
@@ -78,45 +80,42 @@ fun MineScreen(
         }
     }
 
-    Box(
+    Column(
         modifier = Modifier
+            .padding(horizontal = 16.dp)
             .fillMaxSize()
-            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            UserInfoCard(
-                userName = uiState.user?.name,
-                profileUrl = uiState.user?.profile,
-                isLoading = uiState.isLoading,
-                onClick = onEditProfile
-            )
+        UserInfoCard(
+            userName = uiState.user?.name,
+            profileUrl = uiState.user?.profile,
+            isLoading = uiState.isLoading,
+            onClick = onEditProfile
+        )
 
-            StatsCard(
-                decisionSuccessCount = uiState.likeCount,
-                decisionFailureCount = uiState.dislikeCount,
-                tags = uiState.topTagNames
-            )
+        StatsCard(
+            decisionSuccessCount = uiState.likeCount,
+            decisionFailureCount = uiState.dislikeCount,
+            tags = uiState.topTagNames
+        )
 
-            if (uiState.error != null) {
-                Text(
-                    text = uiState.error ?: "",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            if (uiState.isLoading && uiState.user == null) {
-                CircularProgressIndicator()
-            }
-            ListButtonCard(
-                onTopicManage = onTopicManage,
-                onSuggestion = onSuggestion,
-                onFoodTrack = onFoodTrack,
-                onLogout = onLogout
+        if (uiState.error != null) {
+            Text(
+                text = uiState.error ?: "",
+                color = MaterialTheme.colorScheme.error
             )
         }
+
+        if (uiState.isLoading && uiState.user == null) {
+            CircularProgressIndicator()
+        }
+        ListButtonCard(
+            onTopicManage = onTopicManage,
+            onSuggestion = onSuggestion,
+            onFoodTrack = onFoodTrack,
+            onLogout = onLogout
+        )
     }
 }
 
@@ -214,11 +213,18 @@ fun StatsCard(
 
                 // 可点击的灰色文本
                 if (decisionSuccessCount > 0) {
-                    Text(
-                        text = "决策成功 >",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
-                    )
+                    Row(
+                        Modifier.padding(6.dp).clip(RoundedCornerShape(5.dp)).clickable(onClick = {}),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "决策成功",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray,
+                        )
+                        Image(Icons.Default.ChevronRight, contentDescription = null, alpha = 0.3f)
+                    }
+
                 }
             }
 
@@ -379,7 +385,12 @@ fun ListButtonCard(
 }
 
 @Composable
-fun ListButton(modifier: Modifier = Modifier, text: String, icon: @Composable () -> Unit,onClick: () -> Unit) {
+fun ListButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit
+) {
     Row(
         modifier
             .clickable(onClick = onClick)

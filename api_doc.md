@@ -1585,6 +1585,56 @@ Response (error)
 
 ---
 
+### GET /food/liked
+List all foods liked by current user.
+
+Request
+- Method: `GET`
+- Path: `/food/liked`
+- Headers:
+- `Authorization: Bearer <jwt>`
+
+Response (success)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "id": 10,
+      "restaurant_id": 2,
+      "name": "Spicy Chicken",
+      "description": "Hot and crispy.",
+      "image": "https://cdn.example.com/foods/spicy-chicken.jpg",
+      "restaurant": {
+        "id": 2,
+        "name": "Sunset Noodle House",
+        "description": "Hand-pulled noodles and light broths.",
+        "location": "Downtown",
+        "image": "https://cdn.example.com/restaurants/sunset-noodle.jpg"
+      }
+    }
+  ]
+}
+```
+
+Notes
+- This endpoint follows operation records and may contain repeated foods.
+
+Response (error)
+- Status: `200`
+- Body:
+```json
+{
+  "code": 500,
+  "message": "SqlError(...) or JwtError(...)"
+}
+```
+
+---
+
 ### POST /food/consecutiveSuggest
 Request
 - Method: `POST`
