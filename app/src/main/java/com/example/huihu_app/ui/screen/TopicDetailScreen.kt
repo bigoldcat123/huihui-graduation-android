@@ -119,7 +119,8 @@ fun TopicDetailScreen(
                     likeActionInFlight = topic.id in uiState.inFlightTopicIds,
                     onToggleLike = { viewModel.onToggleLike(token, topic) },
                     onCommentClick = { onWriteComment(topic.id) },
-                    onTopicClick = null
+                    onTopicClick = null,
+                    showTitle = true
                 )
             }
             item {
@@ -166,7 +167,8 @@ fun TopicDetailScreen(
                         likeActionInFlight = comment.id in uiState.inFlightTopicIds,
                         onToggleLike = { viewModel.onToggleLike(token, comment) },
                         onCommentClick = { onWriteComment(comment.id) },
-                        onTopicClick = { onOpenTopicDetail(comment) }
+                        onTopicClick = { onOpenTopicDetail(comment) },
+                        showTitle = false
                     )
                 }
             }
@@ -181,7 +183,8 @@ private fun TopicCard(
     likeActionInFlight: Boolean,
     onToggleLike: () -> Unit,
     onCommentClick: () -> Unit,
-    onTopicClick: (() -> Unit)?
+    onTopicClick: (() -> Unit)?,
+    showTitle: Boolean
 ) {
     val liked = likeUi?.liked ?: topic.liked
     val likeCount = likeUi?.likeCount ?: topic.like_count
@@ -211,10 +214,12 @@ private fun TopicCard(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Text(
-                    text = topic.title,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                if (showTitle) {
+                    Text(
+                        text = topic.title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 Text(
                     text = topic.content,
                     style = MaterialTheme.typography.bodyMedium,
