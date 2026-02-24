@@ -2,7 +2,6 @@ package com.example.huihu_app.ui.screen.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,10 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Topic
 import androidx.compose.material.icons.filled.TrackChanges
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,6 +54,7 @@ import com.example.huihu_app.ui.viewModel.MineViewModel
 fun MineScreen(
     token: String,
     onEditProfile: () -> Unit,
+    onTopicManage: () -> Unit,
     onSuggestion: () -> Unit,
     onFoodTrack: () -> Unit,
     onLogout: () -> Unit,
@@ -113,6 +111,7 @@ fun MineScreen(
                 CircularProgressIndicator()
             }
             ListButtonCard(
+                onTopicManage = onTopicManage,
                 onSuggestion = onSuggestion,
                 onFoodTrack = onFoodTrack,
                 onLogout = onLogout
@@ -327,6 +326,7 @@ fun StatItem(label: String, value: String, color: Color) {
 @Composable
 fun ListButtonCard(
     modifier: Modifier = Modifier,
+    onTopicManage: () -> Unit,
     onSuggestion: () -> Unit,
     onFoodTrack: () -> Unit,
     onLogout: () -> Unit,
@@ -337,6 +337,17 @@ fun ListButtonCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)  // 白色背景
     ) {
+        ListButton(
+            text = "话题",
+            icon = { Image(Icons.Filled.Topic, contentDescription = null) },
+            onClick = onTopicManage
+        )
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(color = MaterialTheme.colorScheme.primary.copy(0.3f))
+        )
         ListButton(
             text = "建议",
             icon = { Image(Icons.Filled.AcUnit, contentDescription = null) },

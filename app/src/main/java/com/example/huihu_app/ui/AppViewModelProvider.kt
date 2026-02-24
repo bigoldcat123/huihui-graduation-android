@@ -17,6 +17,7 @@ import com.example.huihu_app.ui.viewModel.MineViewModel
 import com.example.huihu_app.ui.viewModel.NewPersonViewModel
 import com.example.huihu_app.ui.viewModel.SuggestionViewModel
 import com.example.huihu_app.ui.viewModel.TopicDetailViewModel
+import com.example.huihu_app.ui.viewModel.TopicManageViewModel
 
 class AppViewModelProvider {
     companion object {
@@ -62,6 +63,11 @@ class AppViewModelProvider {
             }
             initializer {
                 TopicDetailViewModel(
+                    container().topicRepository
+                )
+            }
+            initializer {
+                TopicManageViewModel(
                     container().topicRepository
                 )
             }

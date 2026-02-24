@@ -89,4 +89,22 @@ class TopicRepository(
     }.getOrElse {
         return ApiResponse.from(it)
     }
+
+    suspend fun myTopics(token: String): ApiResponse<List<Topic>> = runCatching {
+        topicSource.myTopics(token = "Bearer $token")
+    }.getOrElse {
+        return ApiResponse.from(it)
+    }
+
+    suspend fun deleteTopic(
+        token: String,
+        topicId: Int
+    ): ApiResponse<Unit?> = runCatching {
+        topicSource.deleteTopic(
+            token = "Bearer $token",
+            topicId = topicId
+        )
+    }.getOrElse {
+        return ApiResponse.from(it)
+    }
 }

@@ -27,6 +27,11 @@ interface TopicSource {
         @Path("topic_id") topicId: Int
     ): ApiResponse<List<Topic>>
 
+    @GET("/topic/my")
+    suspend fun myTopics(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<Topic>>
+
     @Multipart
     @POST("/upload")
     suspend fun upload(@Part files: List<MultipartBody.Part>): ApiResponse<List<String>>
@@ -41,5 +46,11 @@ interface TopicSource {
     suspend fun likeTopic(
         @Header("Authorization") token: String,
         @Body request: TopicLikeRequest
+    ): ApiResponse<Unit?>
+
+    @POST("/topic/delete/{topic_id}")
+    suspend fun deleteTopic(
+        @Header("Authorization") token: String,
+        @Path("topic_id") topicId: Int
     ): ApiResponse<Unit?>
 }
