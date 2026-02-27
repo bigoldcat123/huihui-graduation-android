@@ -37,6 +37,17 @@ class FoodRecommendationViewModel(
 
     private var authToken: String? = null
     private var refillJob: Job? = null
+    private var isRandomMode: Boolean = false
+
+    fun onRandomModeChanged(enabled: Boolean) {
+        if (isRandomMode == enabled) return
+        isRandomMode = enabled
+        authToken ?: return
+        if (_uiState.value.isLoading) return
+        viewModelScope.launch {
+            refreshCurrentFood(forceRemote = false)
+        }
+    }
 
     fun load(token: String, force: Boolean = false) {
         if (authToken == null) {
@@ -119,7 +130,7 @@ class FoodRecommendationViewModel(
 
     private suspend fun removeCurrentAndLoadNext(foodId: Int, message: String?) {
         val today = localStoreRepository.getTodayFoodIdOrNull()
-        foodRepository.removeCachedFood(foodId)
+        foodRepository.removeCachedFood(foodId = foodId, isRandom = isRandomMode)
         if (today == foodId) {
             localStoreRepository.clearTodayFoodId()
         }
@@ -135,9 +146,9 @@ class FoodRecommendationViewModel(
             it.copy(isLoading = true, error = null)
         }
 
-        if (forceRemote || foodRepository.getTopCachedFood() == null) {
+        if (forceRemote || foodRepository.getTopCachedFood(isRandom = isRandomMode) == null) {
             val fetched = fetchAndCache(token)
-            if (!fetched && foodRepository.getTopCachedFood() == null) {
+            if (!fetched && foodRepository.getTopCachedFood(isRandom = isRandomMode) == null) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -148,8 +159,8 @@ class FoodRecommendationViewModel(
             }
         }
 
-        val topFood = foodRepository.getTopCachedFood()
-        val count = foodRepository.getCachedCount()
+        val topFood = foodRepository.getTopCachedFood(isRandom = isRandomMode)
+        val count = foodRepository.getCachedCount(isRandom = isRandomMode)
         val todayFoodId = localStoreRepository.getTodayFoodIdOrNull()
 
         _uiState.update {
@@ -176,7 +187,7 @@ class FoodRecommendationViewModel(
             }
             val fetched = fetchAndCache(token)
             if (fetched) {
-                val count = foodRepository.getCachedCount()
+                val count = foodRepository.getCachedCount(isRandom = isRandomMode)
                 _uiState.update {
                     it.copy(cachedCount = count)
                 }
@@ -188,13 +199,13 @@ class FoodRecommendationViewModel(
     }
 
     private suspend fun fetchAndCache(token: String): Boolean {
-        val res = foodRepository.recommendation(token)
+        val res = foodRepository.recommendation(token = token, isRandom = isRandomMode)
         if (!res.isSuccess()) {
             return false
         }
         val foods = res.data ?: emptyList()
-        foodRepository.saveRecommendationsToCache(foods)
-        foodRepository.trimCache(CACHE_LIMIT)
+        foodRepository.saveRecommendationsToCache(foods = foods, isRandom = isRandomMode)
+        foodRepository.trimCache(limit = CACHE_LIMIT, isRandom = isRandomMode)
         return true
     }
 

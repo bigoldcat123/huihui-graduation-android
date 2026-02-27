@@ -1,13 +1,15 @@
 package com.example.huihu_app.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.example.huihu_app.data.model.Food
 
-@Entity(tableName = "food_cache")
+@Entity(
+    tableName = "food_cache",
+    primaryKeys = ["id", "isRandom"]
+)
 data class FoodCacheEntity(
-    @PrimaryKey
     val id: Int,
+    val isRandom: Boolean = false,
     val restaurantId: Int,
     val name: String,
     val description: String,
@@ -16,9 +18,13 @@ data class FoodCacheEntity(
     val createdAt: Long
 )
 
-fun Food.toEntity(now: Long = System.currentTimeMillis()): FoodCacheEntity =
+fun Food.toEntity(
+    isRandom: Boolean,
+    now: Long = System.currentTimeMillis()
+): FoodCacheEntity =
     FoodCacheEntity(
         id = id,
+        isRandom = isRandom,
         restaurantId = restaurant_id,
         name = name,
         description = description,

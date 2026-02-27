@@ -127,7 +127,10 @@ fun HomeScreen(
                     onWriteComment = onWriteComment,
                     onOpenTopicDetail = onOpenTopicDetail
                 )
-                1 -> FoodRecommendationScreen(token = token)
+                1 -> FoodRecommendationScreen(
+                    token = token,
+                    isRandomMode = uiState.isRandomMode
+                )
                 else -> MineScreen(
                     token = token,
                     onEditProfile = onEditProfile,

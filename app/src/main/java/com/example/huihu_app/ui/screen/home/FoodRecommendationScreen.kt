@@ -25,12 +25,16 @@ import com.example.huihu_app.ui.viewModel.FoodRecommendationViewModel
 @Composable
 fun FoodRecommendationScreen(
     token: String,
+    isRandomMode: Boolean,
     viewModel: FoodRecommendationViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(token) {
         viewModel.load(token)
+    }
+    LaunchedEffect(isRandomMode) {
+        viewModel.onRandomModeChanged(isRandomMode)
     }
 
     Column(

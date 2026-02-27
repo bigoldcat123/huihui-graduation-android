@@ -33,9 +33,12 @@ class FoodRepository(
             return ApiResponse.from(it)
         }
 
-    suspend fun recommendation(token: String): ApiResponse<List<Food>> =
+    suspend fun recommendation(token: String, isRandom: Boolean): ApiResponse<List<Food>> =
         runCatching {
-            foodSource.recommendation("Bearer $token")
+            foodSource.recommendation(
+                token = "Bearer $token",
+                isRanom = if (isRandom) 1 else null
+            )
         }.getOrElse {
             return ApiResponse.from(it)
         }
@@ -82,21 +85,22 @@ class FoodRepository(
             return ApiResponse.from(it)
         }
 
-    suspend fun saveRecommendationsToCache(foods: List<Food>) {
+    suspend fun saveRecommendationsToCache(foods: List<Food>, isRandom: Boolean) {
         if (foods.isEmpty()) return
-        foodCacheDao.upsertAll(foods.map { it.toEntity() })
+        foodCacheDao.upsertAll(foods.map { it.toEntity(isRandom = isRandom) })
     }
 
-    suspend fun getTopCachedFood(): Food? = foodCacheDao.getTopOne()?.toFood()
+    suspend fun getTopCachedFood(isRandom: Boolean): Food? =
+        foodCacheDao.getTopOne(isRandom = isRandom)?.toFood()
 
-    suspend fun getCachedCount(): Int = foodCacheDao.count()
+    suspend fun getCachedCount(isRandom: Boolean): Int = foodCacheDao.count(isRandom = isRandom)
 
-    suspend fun removeCachedFood(foodId: Int) {
-        foodCacheDao.deleteById(foodId)
+    suspend fun removeCachedFood(foodId: Int, isRandom: Boolean) {
+        foodCacheDao.deleteById(id = foodId, isRandom = isRandom)
     }
 
-    suspend fun trimCache(limit: Int = 100) {
-        foodCacheDao.trimToLimit(limit)
+    suspend fun trimCache(limit: Int = 100, isRandom: Boolean) {
+        foodCacheDao.trimToLimit(limit = limit, isRandom = isRandom)
     }
 
     suspend fun clearCache() {
