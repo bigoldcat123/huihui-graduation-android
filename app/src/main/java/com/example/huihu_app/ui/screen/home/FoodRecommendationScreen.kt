@@ -39,14 +39,6 @@ fun FoodRecommendationScreen(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-//        if (uiState.isRefilling) {
-//            Text(
-//                text = "正在刷新推荐...",
-//                style = MaterialTheme.typography.labelMedium,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
-//        }
-
         when {
             uiState.isLoading && uiState.currentFood == null -> {
                 FoodLoadingCard(modifier = Modifier.fillMaxWidth())
@@ -108,12 +100,6 @@ fun FoodRecommendationScreen(
             )
         }
 
-//        Text(
-//            text = "缓存菜品：${uiState.cachedCount}",
-//            style = MaterialTheme.typography.labelMedium,
-//            color = MaterialTheme.colorScheme.onSurfaceVariant
-//        )
-
         if (uiState.error != null && uiState.currentFood != null) {
             Text(
                 text = "同步网络异常：${uiState.error}",
@@ -121,9 +107,5 @@ fun FoodRecommendationScreen(
                 color = MaterialTheme.colorScheme.error
             )
         }
-//
-//        if (uiState.isLoading && uiState.currentFood != null) {
-//            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-//        }
     }
 }

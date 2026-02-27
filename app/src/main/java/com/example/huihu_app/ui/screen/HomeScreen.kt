@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,13 +69,23 @@ fun HomeScreen(
             if (uiState.selectedTab != 2) {
                 TopAppBar(
                     title = {
-                        Text(
-                            when (uiState.selectedTab) {
-                                0 -> "论坛"
-                                1 -> "今日吃什么"
-                                else -> "我的"
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                when (uiState.selectedTab) {
+                                    0 -> "论坛"
+                                    1 -> "今日吃什么"
+                                    else -> "我的"
+                                }
+                            )
+                            if (uiState.selectedTab == 1 && uiState.isRandomMode) {
+                                Icon(
+                                    imageVector = Icons.Filled.Shuffle,
+                                    contentDescription = "随机模式已开启",
+                                    modifier = Modifier.padding(start = 6.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
-                        )
+                        }
                     },
                     actions = {
                         if (uiState.selectedTab == 1) {
