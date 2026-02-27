@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -146,20 +147,21 @@ fun HomeScreen(
 
     if (showSettingsSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showSettingsSheet = false }
+            onDismissRequest = { showSettingsSheet = false },
+            sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = false,
+            ),
+
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "设置",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "推荐设置"
+                    text = "推荐设置",
+                    style = MaterialTheme.typography.displayMedium
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,12 +173,6 @@ fun HomeScreen(
                         checked = uiState.isRandomMode,
                         onCheckedChange = viewModel::setRandomMode
                     )
-                }
-                Button(
-                    onClick = { showSettingsSheet = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("关闭")
                 }
             }
         }
