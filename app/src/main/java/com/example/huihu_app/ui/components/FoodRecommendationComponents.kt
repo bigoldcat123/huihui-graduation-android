@@ -17,11 +17,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SwipeToDismissBox
@@ -287,15 +287,32 @@ fun TodayFoodCard(
     ) {
         FoodCardContent(food = food)
         if (isCelebrating) {
-            AssistChip(
-                onClick = {},
-                enabled = false,
-                label = { Text("今日之选") },
-                leadingIcon = { Icon(Icons.Filled.AutoAwesome, contentDescription = null) },
+            Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(12.dp)
-            )
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(Color.Black.copy(alpha = 0.56f))
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(999.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AutoAwesome,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+                Text(
+                    text = "今日之选",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
