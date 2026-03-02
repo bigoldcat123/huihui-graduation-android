@@ -199,7 +199,7 @@ Response (success)
       "title": "Re: My topic",
       "content": "I agree",
       "images": null,
-      "create_at": "2026-02-13T09:31:00+00:00",
+      "create_at": "2026-02-13",
       "user_info": {
         "id": 7,
         "name": "bob",
@@ -1231,7 +1231,8 @@ Request
 - Path: `/food/recommendation`
 - Headers:
 - `Authorization: Bearer <jwt>`
-- Params: none
+- Query:
+- `is_random`: string, optional. If present (any value), return 10 random foods from DB.
 - Body: none
 
 Response (success)
@@ -1265,6 +1266,7 @@ Response (error)
 ```
 
 Notes
+- If `is_random` is present, recommendation logic is skipped and server returns random 10 foods.
 - No pagination.
 - Repeats are allowed in MVP.
 - Client calls this endpoint again when cards are exhausted.
@@ -1716,7 +1718,7 @@ Response (success)
       "title": "My topic",
       "content": "Topic content",
       "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
-      "create_at": "2026-02-13T09:30:00+00:00",
+      "create_at": "2026-02-13",
       "user_info": {
         "id": 3,
         "name": "alice",
@@ -1768,7 +1770,7 @@ Response (success)
       "title": "My topic",
       "content": "Topic content",
       "images": ["/static/uploads/a.jpg", "/static/uploads/b.jpg"],
-      "create_at": "2026-02-13T09:30:00+00:00",
+      "create_at": "2026-02-13",
       "user_info": {
         "id": 3,
         "name": "alice",

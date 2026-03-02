@@ -23,7 +23,7 @@ interface FoodSource {
     @GET("/food/recommendation")
     suspend fun recommendation(
         @Header("Authorization") token: String,
-        @Query("isRanom") isRanom: Int? = null
+        @Query("is_random") isRandom: Int? = null
     ): ApiResponse<List<Food>>
 
     @POST("/food/recommendation/reaction")

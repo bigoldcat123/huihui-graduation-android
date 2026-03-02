@@ -161,7 +161,7 @@ fun HomeScreen(
             ) {
                 Text(
                     text = "推荐设置",
-                    style = MaterialTheme.typography.displaySmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
