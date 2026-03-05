@@ -76,6 +76,9 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                         onCreateTopic = { backStack.add(Nav.CreateTopic) },
                         onWriteComment = { topicId -> backStack.add(Nav.WriteComment(topicId)) },
                         onOpenTopicDetail = { topic -> backStack.add(Nav.TopicDetail(topic)) },
+                        onOpenImagePreview = { images, index ->
+                            backStack.add(Nav.ImagePreview(images = images, index = index))
+                        },
                         onEditProfile = { backStack.add(Nav.EditProfile) },
                         onFoodLiked = { backStack.add(Nav.FoodLiked) },
                         onTopicManage = { backStack.add(Nav.TopicManage) },

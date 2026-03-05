@@ -1,6 +1,5 @@
 package com.example.huihu_app.ui.screen.home
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
@@ -64,6 +64,7 @@ fun ForumScreen(
     token: String,
     onWriteComment: (Int) -> Unit,
     onOpenTopicDetail: (Topic) -> Unit,
+    onOpenImagePreview: (List<String>, Int) -> Unit,
     viewModel: ForumViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val topics = viewModel.topics(token).collectAsLazyPagingItems()
@@ -119,7 +120,8 @@ fun ForumScreen(
                         likeActionInFlight = topic.id in uiState.inFlightTopicIds,
                         onToggleLike = { viewModel.onToggleLike(token, topic) },
                         onWriteComment = { onWriteComment(topic.id) },
-                        onOpenTopicDetail = { onOpenTopicDetail(topic) }
+                        onOpenTopicDetail = { onOpenTopicDetail(topic) },
+                        onOpenImagePreview = onOpenImagePreview
                     )
                 }
             }
@@ -167,7 +169,8 @@ private fun TopicItem(
     likeActionInFlight: Boolean,
     onToggleLike: () -> Unit,
     onWriteComment: () -> Unit,
-    onOpenTopicDetail: () -> Unit
+    onOpenTopicDetail: () -> Unit,
+    onOpenImagePreview: (List<String>, Int) -> Unit
 ) {
     val liked = likeUi?.liked ?: topic.liked
     val likeCount = likeUi?.likeCount ?: topic.like_count
@@ -192,7 +195,8 @@ private fun TopicItem(
                 likeCount = likeCount,
                 likeActionInFlight = likeActionInFlight,
                 onToggleLike = onToggleLike,
-                onWriteComment = onWriteComment
+                onWriteComment = onWriteComment,
+                onOpenImagePreview = onOpenImagePreview
             )
         }
     }
@@ -234,7 +238,8 @@ private fun TopicItemContent(
     likeCount: Int,
     likeActionInFlight: Boolean,
     onToggleLike: () -> Unit,
-    onWriteComment: () -> Unit
+    onWriteComment: () -> Unit,
+    onOpenImagePreview: (List<String>, Int) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -247,7 +252,11 @@ private fun TopicItemContent(
             fontWeight = FontWeight.Medium
         )
         TopicTextContent(content = topic.content)
-        TopicImagesStrip(images = topic.images.orEmpty(), title = topic.title)
+        TopicImagesStrip(
+            images = topic.images.orEmpty(),
+            title = topic.title,
+            onOpenImagePreview = onOpenImagePreview
+        )
         TopicFooter(
             createdAt = topic.create_at,
             liked = liked,
@@ -270,9 +279,13 @@ private fun TopicTextContent(content: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
-private const val TAG = "ForumScreen"
+
 @Composable
-private fun TopicImagesStrip(images: List<String>, title: String) {
+private fun TopicImagesStrip(
+    images: List<String>,
+    title: String,
+    onOpenImagePreview: (List<String>, Int) -> Unit
+) {
     if (images.isEmpty()) return
 
     LazyRow(
@@ -281,16 +294,14 @@ private fun TopicImagesStrip(images: List<String>, title: String) {
             .fillMaxWidth()
             .height(120.dp)
     ) {
-        items(images) { rawUrl ->
+        itemsIndexed(images) { index, rawUrl ->
             AsyncImage(
                 model = rawUrl.toAbsoluteImageUrl(),
                 contentDescription = title,
                 modifier = Modifier
                     .aspectRatio(1.2f)
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable(onClick = {
-                        Log.d(TAG, "TopicImagesStrip: click!")
-                    }),
+                    .clickable { onOpenImagePreview(images, index) },
                 contentScale = ContentScale.Crop
             )
         }

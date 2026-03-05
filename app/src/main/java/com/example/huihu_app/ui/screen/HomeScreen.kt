@@ -55,6 +55,7 @@ fun HomeScreen(
     onCreateTopic: () -> Unit,
     onWriteComment: (Int) -> Unit,
     onOpenTopicDetail: (Topic) -> Unit,
+    onOpenImagePreview: (List<String>, Int) -> Unit,
     onEditProfile: () -> Unit,
     onFoodLiked: () -> Unit,
     onTopicManage: () -> Unit,
@@ -127,7 +128,8 @@ fun HomeScreen(
                     state = state,
                     token = token,
                     onWriteComment = onWriteComment,
-                    onOpenTopicDetail = onOpenTopicDetail
+                    onOpenTopicDetail = onOpenTopicDetail,
+                    onOpenImagePreview = onOpenImagePreview
                 )
                 1 -> FoodRecommendationScreen(
                     token = token,
