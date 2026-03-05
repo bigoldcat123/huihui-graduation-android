@@ -1,5 +1,6 @@
 package com.example.huihu_app.ui.screen.home
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -207,7 +208,7 @@ private fun TopicAuthorAvatar(topic: Topic) {
         if (!profileUrl.isNullOrBlank()) {
             AsyncImage(
                 model = profileUrl.toAbsoluteImageUrl(),
-                contentDescription = topic.user_info?.name ?: "头像",
+                contentDescription = topic.user_info.name,
                 modifier = Modifier
                     .size(34.dp)
                     .clip(CircleShape),
@@ -269,7 +270,7 @@ private fun TopicTextContent(content: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
-
+private const val TAG = "ForumScreen"
 @Composable
 private fun TopicImagesStrip(images: List<String>, title: String) {
     if (images.isEmpty()) return
@@ -286,7 +287,10 @@ private fun TopicImagesStrip(images: List<String>, title: String) {
                 contentDescription = title,
                 modifier = Modifier
                     .aspectRatio(1.2f)
-                    .clip(RoundedCornerShape(10.dp)),
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(onClick = {
+                        Log.d(TAG, "TopicImagesStrip: click!")
+                    }),
                 contentScale = ContentScale.Crop
             )
         }
