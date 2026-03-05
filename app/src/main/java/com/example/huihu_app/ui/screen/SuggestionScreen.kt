@@ -174,40 +174,51 @@ private fun SuggestionItemWithFood(
     onClick: () -> Unit
 ) {
     val imageUrl = suggestion.food?.image ?: suggestion.images?.firstOrNull()
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clip(shape = RoundedCornerShape(10.dp))
-            .clickable(onClick = onClick), horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(modifier = Modifier.fillMaxHeight()) {
-            Box(modifier = Modifier.fillMaxHeight()) {
-                AsyncImage(
-                    model = AppContainer.BASE_URL + imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(10f / 14f),
-                    contentScale = ContentScale.Crop
-                )
-                Text(suggestion.type, Modifier.padding(4.dp).clip(shape = RoundedCornerShape(5.dp)).background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.labelSmall)
+    Card(Modifier
+        .fillMaxWidth()
+        .clickable(onClick = onClick)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .padding(end = 14.dp)
+                , horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(modifier = Modifier.fillMaxHeight()) {
+                Box(modifier = Modifier.fillMaxHeight()) {
+                    AsyncImage(
+                        model = AppContainer.BASE_URL + imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(10f / 14f),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(suggestion.type, Modifier.padding(4.dp).clip(shape = RoundedCornerShape(5.dp)).background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.labelSmall)
+                }
+                Column(Modifier
+                    .fillMaxHeight().padding(10.dp),
+                ) {
+                    Text(text =  suggestion.food!!.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight(800), modifier = Modifier.padding(bottom = 10.dp))
+                    Text(suggestion.restaurant!!.name,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
+                    Text(suggestion.content,style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(bottom = 7.dp))
+                    Text(suggestion.created_at,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
+                }
             }
             Column(Modifier
-                .fillMaxHeight().padding(10.dp),
-                ) {
-                Text(text =  suggestion.food!!.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight(800), modifier = Modifier.padding(bottom = 10.dp))
-                Text(suggestion.restaurant!!.name,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
-                Text(suggestion.content,style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(bottom = 7.dp))
-                Text(suggestion.created_at,style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 7.dp))
+                .fillMaxHeight()
+                .padding(vertical = 10.dp)) {
+                Text(
+                    text = suggestion.status,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
-        Column(Modifier
-            .fillMaxHeight()
-            .padding(vertical = 10.dp)) {
-            Text(suggestion.status)
-        }
     }
+
 }
 
 @Composable
