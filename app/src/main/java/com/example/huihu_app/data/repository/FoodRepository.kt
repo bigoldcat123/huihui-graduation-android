@@ -37,7 +37,7 @@ class FoodRepository(
         runCatching {
             foodSource.recommendation(
                 token = "Bearer $token",
-                isRanom = if (isRandom) 1 else null
+                isRandom = if (isRandom) 1 else null
             )
         }.getOrElse {
             return ApiResponse.from(it)

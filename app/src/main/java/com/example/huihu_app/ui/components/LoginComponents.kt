@@ -1,8 +1,14 @@
 package com.example.huihu_app.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -12,6 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
 import com.example.huihu_app.ui.viewModel.AuthUiState
 
 @Composable
@@ -25,26 +34,52 @@ fun LoginForm(
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Card(modifier) {
-        Column {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.94f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             OutlinedTextField(
                 value = userName,
-                onValueChange = {userName = it},
-                label = { Text("用户名") }
+                onValueChange = { userName = it },
+                label = { Text("用户名") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = password,
-                onValueChange = {password = it},
-                label = { Text("密码") }
+                onValueChange = { password = it },
+                label = { Text("密码") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
             )
-            Button(onClick = {onLogin(userName,password)}, enabled = !uiState.isLoading) {
+            Button(
+                onClick = { onLogin(userName, password) },
+                enabled = !uiState.isLoading && userName.isNotBlank() && password.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("登录")
             }
-            TextButton(onClick = onRegister, enabled = !uiState.isLoading) {
+            TextButton(
+                onClick = onRegister,
+                enabled = !uiState.isLoading,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("创建账号")
             }
-            if (uiState.error != null) {
-                Text(uiState.error)
+            uiState.error?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

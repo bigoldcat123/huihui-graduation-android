@@ -12,13 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.huihu_app.AppContainer.Companion.BASE_URL_BACK_END
 
 @Composable
 fun FoodTrackScreen(token: String) {
 
     val encodedToken = Uri.encode(token)
     WebPage(
-        url = "http://mbp.local:3000/foodtrack?token=$encodedToken",
+        url = "$BASE_URL_BACK_END/foodtrack?token=$encodedToken",
         modifier = Modifier.fillMaxSize()
     )
 }
