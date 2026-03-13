@@ -26,8 +26,8 @@ import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -108,7 +108,7 @@ fun ForumScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             items(topics.itemCount) { index ->
                 val topic = topics[index]
@@ -123,6 +123,12 @@ fun ForumScreen(
                         onOpenTopicDetail = { onOpenTopicDetail(topic) },
                         onOpenImagePreview = onOpenImagePreview
                     )
+                    if (index < topics.itemCount - 1) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            thickness = 0.6.dp
+                        )
+                    }
                 }
             }
 
@@ -175,7 +181,7 @@ private fun TopicItem(
     val liked = likeUi?.liked ?: topic.liked
     val likeCount = likeUi?.likeCount ?: topic.like_count
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onOpenTopicDetail)
