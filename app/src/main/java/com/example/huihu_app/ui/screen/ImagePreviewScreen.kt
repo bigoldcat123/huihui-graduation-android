@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,38 +47,11 @@ fun ImagePreviewScreen(
         pageCount = { images.size }
     )
 
-    Scaffold(
-        containerColor = Color.Black,
-        topBar = {
-//            TopAppBar(
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-//                ),
-//                title = {
-//                    if (images.isNotEmpty()) {
-//                        Text(
-//                            text = "${pagerState.currentPage + 1} / ${images.size}",
-//                            color = Color.White
-//                        )
-//                    }
-//                },
-//                navigationIcon = {
-//                    IconButton(onClick = onBack) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                            contentDescription = "返回",
-//                            tint = Color.White
-//                        )
-//                    }
-//                }
-//            )
-        }
-    ) { paddingValues ->
+    Scaffold{ paddingValues ->
         if (images.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black)
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
@@ -92,9 +66,9 @@ fun ImagePreviewScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
                 .padding(paddingValues)
         ) {
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
@@ -105,6 +79,9 @@ fun ImagePreviewScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Fit
                 )
+            }
+            Button(onClick = { onBack() }, modifier = Modifier.align(Alignment.TopStart)) {
+                Text("返回")
             }
 
             Box(
