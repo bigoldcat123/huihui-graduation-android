@@ -30,6 +30,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -75,39 +76,14 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (uiState.selectedTab != 2) {
-                TopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    title = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                when (uiState.selectedTab) {
-                                    0 -> "论坛"
-                                    1 -> "今日吃什么"
-                                    else -> "我的"
-                                }
-                            )
-                            if (uiState.selectedTab == 1 && uiState.isRandomMode) {
-                                Icon(
-                                    imageVector = Icons.Filled.Shuffle,
-                                    contentDescription = "随机模式已开启",
-                                    modifier = Modifier.padding(start = 6.dp),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    },
-                    actions = {
-                        if (uiState.selectedTab == 1) {
-                            IconButton(onClick = { showSettingsSheet = true }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Settings,
-                                    contentDescription = "设置"
-                                )
-                            }
-                        }
-                    }
+            when (uiState.selectedTab) {
+                0 -> ForumTopBar(scrollBehavior = scrollBehavior)
+                1 -> FoodTopBar(
+                    isRandomMode = uiState.isRandomMode,
+                    onOpenSettings = { showSettingsSheet = true },
+                    scrollBehavior = scrollBehavior
                 )
+                else -> Unit
             }
         },
         bottomBar = {
@@ -216,4 +192,46 @@ private fun HomeBottomBar(
             label = { Text("我的") }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ForumTopBar(scrollBehavior: TopAppBarScrollBehavior) {
+    TopAppBar(
+        scrollBehavior = scrollBehavior,
+        title = { Text("论坛") }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FoodTopBar(
+    isRandomMode: Boolean,
+    onOpenSettings: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior
+) {
+    TopAppBar(
+        scrollBehavior = scrollBehavior,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("今日吃什么")
+                if (isRandomMode) {
+                    Icon(
+                        imageVector = Icons.Filled.Shuffle,
+                        contentDescription = "随机模式已开启",
+                        modifier = Modifier.padding(start = 6.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(onClick = onOpenSettings) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "设置"
+                )
+            }
+        }
+    )
 }
