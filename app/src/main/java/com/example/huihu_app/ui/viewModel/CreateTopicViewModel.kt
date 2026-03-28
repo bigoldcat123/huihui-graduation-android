@@ -26,6 +26,7 @@ data class CreateTopicUiState(
     val title: String = "",
     val content: String = "",
     val selectedImages: List<SelectedImage> = emptyList(),
+    val isPublic: Boolean = true,
     val isSubmitting: Boolean = false,
     val error: String? = null,
     val created: Boolean = false
@@ -50,6 +51,10 @@ class CreateTopicViewModel(
 
     fun updateContent(content: String) {
         _uiState.update { it.copy(content = content) }
+    }
+
+    fun updateVisibility(isPublic: Boolean) {
+        _uiState.update { it.copy(isPublic = isPublic) }
     }
 
     fun onImagesPicked(contentResolver: ContentResolver, uris: List<Uri>) {

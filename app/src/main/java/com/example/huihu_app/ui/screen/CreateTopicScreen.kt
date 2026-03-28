@@ -87,6 +87,8 @@ fun CreateTopicScreen(
                 },
                 onRemoveImage = viewModel::removeImage,
                 isUploadingImages = uiState.isUploadingImages,
+                isPublic = uiState.isPublic,
+                onVisibilityChange = viewModel::updateVisibility,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp)
