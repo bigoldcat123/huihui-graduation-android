@@ -1,5 +1,7 @@
 package com.example.huihu_app
 
+import com.example.huihu_app.data.model.CreateTopicRequest
+import kotlinx.serialization.json.Json
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +14,17 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        println(
+            Json.encodeToString(
+                CreateTopicRequest(
+                    "title",
+                    "content",
+                    emptyList(),
+                    null,
+                    "",
+                    false
+                )
+            )
+        );
     }
 }

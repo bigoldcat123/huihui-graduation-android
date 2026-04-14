@@ -155,7 +155,9 @@ class CreateTopicViewModel(
                 title = effectiveTitle,
                 content = state.content,
                 images = state.selectedImages.mapNotNull { it.uploadedUrl },
-                commentToId = commentToId
+                commentToId = commentToId,
+                location = state.locationText.takeIf { !it.isBlank() && !it.contains("点击获取位置") },
+                isPublic = state.isPublic
             )
 
             if (!createRes.isSuccess()) {

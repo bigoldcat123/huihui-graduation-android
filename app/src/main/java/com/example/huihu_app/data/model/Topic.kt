@@ -10,6 +10,8 @@ data class Topic(
     val content: String,
     val images: List<String>?,
     val create_at: String,
+    val location: String? = null,
+    val is_public: Boolean = false,
     val user_info: TopicUserInfo? = null,
     val comment_count: Int = 0,
     val like_count: Int = 0,

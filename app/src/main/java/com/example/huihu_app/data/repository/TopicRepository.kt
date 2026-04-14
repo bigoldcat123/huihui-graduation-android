@@ -36,7 +36,9 @@ class TopicRepository(
         title: String,
         content: String,
         images: List<String>,
-        commentToId: Int? = null
+        commentToId: Int? = null,
+        location: String? = null,
+        isPublic: Boolean = false
     ): ApiResponse<Unit> =
         runCatching {
             Log.d(
@@ -45,7 +47,9 @@ class TopicRepository(
                         title = title,
                         content = content,
                         images = images,
-                        reply_to_id = commentToId
+                        reply_to_id = commentToId,
+                        location = location,
+                        is_public = isPublic
                     )
                 }"
             )
@@ -55,7 +59,9 @@ class TopicRepository(
                     title = title,
                     content = content,
                     images = images,
-                    reply_to_id = commentToId
+                    reply_to_id = commentToId,
+                    location = location?:"",
+                    is_public = isPublic
                 )
             )
         }.getOrElse {
