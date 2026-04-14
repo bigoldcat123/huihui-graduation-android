@@ -157,7 +157,17 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                     FoodTrackScreen(token = authToken!!)
                 }
                 entry<Nav.FoodAttr> { nav ->
-                    FoodAttrScreen(foodId = nav.foodId)
+                    FoodAttrScreen(
+                        token = authToken!!,
+                        foodId = nav.foodId,
+                        onBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLast()
+                            } else {
+                                backStack.add(Nav.Home)
+                            }
+                        }
+                    )
                 }
                 entry<Nav.EditProfile>() {
                     EditProfileScreen(
