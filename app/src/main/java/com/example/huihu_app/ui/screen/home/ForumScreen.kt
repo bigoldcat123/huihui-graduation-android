@@ -265,6 +265,7 @@ private fun TopicItemContent(
         )
         TopicFooter(
             createdAt = topic.create_at,
+            location = topic.location,
             liked = liked,
             likeCount = likeCount,
             commentCount = topic.comment_count,
@@ -317,6 +318,7 @@ private fun TopicImagesStrip(
 @Composable
 private fun TopicFooter(
     createdAt: String,
+    location: String?,
     liked: Boolean,
     likeCount: Int,
     commentCount: Int,
@@ -324,11 +326,23 @@ private fun TopicFooter(
     onToggleLike: () -> Unit,
     onWriteComment: () -> Unit
 ) {
-    Text(
-        text = createdAt,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = createdAt,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        if (!location.isNullOrBlank()) {
+            Text(
+                text = location,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),

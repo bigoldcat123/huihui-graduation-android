@@ -246,11 +246,23 @@ private fun TopicCard(
                         }
                     }
                 }
-                Text(
-                    text = topic.create_at,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = topic.create_at,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (!topic.location.isNullOrBlank()) {
+                        Text(
+                            text = topic.location,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
                 TopicActionRow(
                     liked = liked,
                     likeCount = likeCount,
