@@ -302,16 +302,3 @@ private fun String.toAbsoluteImageUrl(): String {
     val path = if (startsWith("/")) this else "/$this"
     return host + path
 }
-
-@Composable
-fun FoodAttrScreen(
-    foodId: Int,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("FoodAttrScreen: foodId = $foodId")
-    }
-}

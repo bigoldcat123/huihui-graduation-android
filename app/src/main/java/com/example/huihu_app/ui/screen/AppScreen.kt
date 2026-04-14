@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -20,7 +19,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.huihu_app.Nav
 import com.example.huihu_app.state.AuthState
 import com.example.huihu_app.ui.AppViewModelProvider
-import com.example.huihu_app.ui.screen.FoodAttrScreen
 import com.example.huihu_app.ui.viewModel.AppViewModel
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
