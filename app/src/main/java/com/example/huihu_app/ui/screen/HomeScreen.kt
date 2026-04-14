@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.TrackChanges
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,7 +50,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.huihu_app.AppContainer
@@ -60,6 +58,7 @@ import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.screen.home.FoodRecommendationScreen
 import com.example.huihu_app.ui.screen.home.ForumScreen
 import com.example.huihu_app.ui.screen.home.MineScreen
+import com.example.huihu_app.ui.screen.home.WeightRecordScreen
 import com.example.huihu_app.ui.viewModel.HomeViewModel
 
 @Composable
@@ -75,6 +74,7 @@ fun HomeScreen(
     onTopicManage: () -> Unit,
     onSuggestion: () -> Unit,
     onFoodTrack: () -> Unit,
+    onFoodAttr: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -134,7 +134,8 @@ fun HomeScreen(
                 )
                 1 -> FoodRecommendationScreen(
                     token = token,
-                    isRandomMode = uiState.isRandomMode
+                    isRandomMode = uiState.isRandomMode,
+                    onFoodClick = { foodId -> onFoodAttr(foodId) }
                 )
                 2 -> WeightRecordScreen()
                 else -> MineScreen(
@@ -300,4 +301,17 @@ private fun String.toAbsoluteImageUrl(): String {
     val host = AppContainer.BASE_URL.trimEnd('/')
     val path = if (startsWith("/")) this else "/$this"
     return host + path
+}
+
+@Composable
+fun FoodAttrScreen(
+    foodId: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("FoodAttrScreen: foodId = $foodId")
+    }
 }

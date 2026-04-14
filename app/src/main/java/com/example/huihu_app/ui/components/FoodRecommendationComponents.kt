@@ -1,6 +1,7 @@
 package com.example.huihu_app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -100,6 +101,7 @@ fun SwipeFoodCard(
 @Composable
 fun FoodCardContent(
     food: Food,
+    onFoodClick: ((Int) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -115,7 +117,15 @@ fun FoodCardContent(
             AsyncImage(
                 model = AppContainer.BASE_URL + food.image,
                 contentDescription = food.name,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (onFoodClick != null) {
+                            Modifier.clickable { onFoodClick(food.id) }
+                        } else {
+                            Modifier
+                        }
+                    ),
                 contentScale = ContentScale.Crop
             )
 
@@ -251,6 +261,7 @@ fun FoodLoadingCard(modifier: Modifier = Modifier) {
 fun TodayFoodCard(
     food: Food,
     isCelebrating: Boolean,
+    onFoodClick: ((Int) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val pulse = if (isCelebrating) {
@@ -285,7 +296,7 @@ fun TodayFoodCard(
             )
             .padding(2.dp)
     ) {
-        FoodCardContent(food = food)
+        FoodCardContent(food = food, onFoodClick = onFoodClick)
         if (isCelebrating) {
             Row(
                 modifier = Modifier

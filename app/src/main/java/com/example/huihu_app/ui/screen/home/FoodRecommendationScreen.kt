@@ -26,6 +26,7 @@ import com.example.huihu_app.ui.viewModel.FoodRecommendationViewModel
 fun FoodRecommendationScreen(
     token: String,
     isRandomMode: Boolean,
+    onFoodClick: (Int) -> Unit = {},
     viewModel: FoodRecommendationViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -75,6 +76,7 @@ fun FoodRecommendationScreen(
                 TodayFoodCard(
                     food = currentFood,
                     isCelebrating = isAccepted,
+                    onFoodClick = onFoodClick,
                     modifier = Modifier.fillMaxWidth()
                 )
 

@@ -35,6 +35,8 @@ sealed interface Nav {
     @Serializable
     object NewPerson: Nav, NavKey
     @Serializable
+    data class FoodAttr(val foodId: Int): Nav, NavKey
+    @Serializable
     object Home: Nav, NavKey
     @Serializable
     object Splash: Nav, NavKey

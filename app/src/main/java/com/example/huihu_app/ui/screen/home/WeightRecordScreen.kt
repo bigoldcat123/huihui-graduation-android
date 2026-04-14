@@ -1,4 +1,4 @@
-package com.example.huihu_app.ui.screen
+package com.example.huihu_app.ui.screen.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement

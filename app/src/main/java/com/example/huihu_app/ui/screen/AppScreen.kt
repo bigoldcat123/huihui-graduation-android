@@ -20,6 +20,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.huihu_app.Nav
 import com.example.huihu_app.state.AuthState
 import com.example.huihu_app.ui.AppViewModelProvider
+import com.example.huihu_app.ui.screen.FoodAttrScreen
 import com.example.huihu_app.ui.viewModel.AppViewModel
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -83,7 +84,8 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                         onFoodLiked = { backStack.add(Nav.FoodLiked) },
                         onTopicManage = { backStack.add(Nav.TopicManage) },
                         onSuggestion = { backStack.add(Nav.Suggestion) },
-                        onFoodTrack = { backStack.add(Nav.FoodTrack) }
+                        onFoodTrack = { backStack.add(Nav.FoodTrack) },
+                        onFoodAttr = { foodId -> backStack.add(Nav.FoodAttr(foodId)) }
                     )
                 }
                 entry<Nav.TopicManage>() {
@@ -155,6 +157,9 @@ fun AppScreen(viewModel: AppViewModel = viewModel(factory = AppViewModelProvider
                 }
                 entry<Nav.FoodTrack>() {
                     FoodTrackScreen(token = authToken!!)
+                }
+                entry<Nav.FoodAttr> { nav ->
+                    FoodAttrScreen(foodId = nav.foodId)
                 }
                 entry<Nav.EditProfile>() {
                     EditProfileScreen(
