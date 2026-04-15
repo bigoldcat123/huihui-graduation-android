@@ -94,7 +94,7 @@ class FoodRecommendationViewModel(
                 feedbackMessage = "不错的选择，祝你用餐愉快。"
             )
         }
-        loadComments(current.id)
+//        loadComments(current.id)
     }
 
     fun onChangeIt() {
@@ -169,7 +169,7 @@ class FoodRecommendationViewModel(
             localStoreRepository.clearTodayFoodId()
         }
         _uiState.update {
-            it.copy(acceptedFoodId = null, feedbackMessage = message)
+            it.copy(acceptedFoodId = null, feedbackMessage = message, comments = emptyList())
         }
         refreshCurrentFood(forceRemote = false)
     }
@@ -196,15 +196,20 @@ class FoodRecommendationViewModel(
         val topFood = foodRepository.getTopCachedFood(isRandom = isRandomMode)
         val count = foodRepository.getCachedCount(isRandom = isRandomMode)
         val todayFoodId = localStoreRepository.getTodayFoodIdOrNull()
+        val isTodayFood = todayFoodId == topFood?.id
 
         _uiState.update {
             it.copy(
                 currentFood = topFood,
                 cachedCount = count,
                 isLoading = false,
-                acceptedFoodId = if (todayFoodId == topFood?.id) todayFoodId else null,
-                feedbackMessage = if (todayFoodId == topFood?.id) "不错的选择，祝你用餐愉快。" else it.feedbackMessage
+                acceptedFoodId = if (isTodayFood) todayFoodId else null,
+                feedbackMessage = if (isTodayFood) "不错的选择，祝你用餐愉快。" else it.feedbackMessage
             )
+        }
+
+        if (topFood != null) {
+            loadComments(topFood.id)
         }
 
         if (count <= LOW_CACHE_THRESHOLD) {
