@@ -1,5 +1,6 @@
 package com.example.huihu_app.ui.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.huihu_app.data.model.Food
@@ -25,6 +26,7 @@ data class FoodRecommendationUiState(
     val isLoadingComments: Boolean = false
 )
 
+private const val TAG = "FoodRecommendationViewM"
 class FoodRecommendationViewModel(
     private val foodRepository: FoodRepository,
     private val localStoreRepository: LocalStoreRepository
@@ -142,6 +144,20 @@ class FoodRecommendationViewModel(
                     comments = response.data.orEmpty(),
                     isLoadingComments = false
                 )
+            }
+        }
+    }
+
+    fun addComment(token: String, content: String) {
+        val current = _uiState.value.currentFood ?: return
+        viewModelScope.launch {
+            val response = foodRepository.createFoodComment(
+                token = token,
+                foodId = current.id,
+                content = content
+            )
+            if (response.isSuccess()) {
+                loadComments(current.id)
             }
         }
     }
