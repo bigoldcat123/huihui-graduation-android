@@ -2,6 +2,7 @@ package com.example.huihu_app.data.local.entity
 
 import androidx.room.Entity
 import com.example.huihu_app.data.model.Food
+import com.example.huihu_app.data.model.Restaurant
 
 @Entity(
     tableName = "food_cache",
@@ -15,7 +16,8 @@ data class FoodCacheEntity(
     val description: String,
     val image: String,
     val price: Double? = null,
-    val createdAt: Long
+    val createdAt: Long,
+    val restaurantName: String? = null
 )
 
 fun Food.toEntity(
@@ -30,7 +32,8 @@ fun Food.toEntity(
         description = description,
         image = image,
         price = price,
-        createdAt = now
+        createdAt = now,
+        restaurantName = restaurant?.name
     )
 
 fun FoodCacheEntity.toFood(): Food =
@@ -40,5 +43,11 @@ fun FoodCacheEntity.toFood(): Food =
         name = name,
         description = description,
         image = image,
-        price = price
+        price = price,
+        restaurant = restaurantName?.let { name ->
+            Restaurant(
+                id = restaurantId,
+                name = name
+            )
+        }
     )

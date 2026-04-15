@@ -9,7 +9,7 @@ import com.example.huihu_app.data.local.entity.FoodCacheEntity
 
 @Database(
     entities = [FoodCacheEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -50,6 +50,12 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 db.execSQL("DROP TABLE `food_cache`")
                 db.execSQL("ALTER TABLE `food_cache_new` RENAME TO `food_cache`")
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE food_cache ADD COLUMN restaurantName TEXT")
             }
         }
     }
