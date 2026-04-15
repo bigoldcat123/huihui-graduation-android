@@ -85,7 +85,7 @@ class AppContainer(context: Context) {
     }
 
     companion object {
-        const val HOST = "10.12.9.135"
+        const val HOST = "192.168.1.102"
         const val BASE_URL = "http://$HOST:8899"
         const val BASE_URL_BACK_END = "http://$HOST:3000"
     }
