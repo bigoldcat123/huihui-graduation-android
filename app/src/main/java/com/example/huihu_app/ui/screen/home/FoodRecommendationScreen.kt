@@ -1,5 +1,6 @@
 package com.example.huihu_app.ui.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -162,7 +163,10 @@ fun FoodRecommendationScreen(
                 }
             } else {
                 items(uiState.comments) { comment ->
-                    CommentItem(comment = comment)
+                    CommentItem(
+                        comment = comment,
+                        onThumbClick = { viewModel.toggleCommentThumb(token, comment.id) }
+                    )
                 }
             }
         }
@@ -170,7 +174,10 @@ fun FoodRecommendationScreen(
 }
 
 @Composable
-private fun CommentItem(comment: FoodComment) {
+private fun CommentItem(
+    comment: FoodComment,
+    onThumbClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
@@ -196,6 +203,7 @@ private fun CommentItem(comment: FoodComment) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Row(
+                    modifier = Modifier.clickable(onClick = onThumbClick),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {

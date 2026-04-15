@@ -162,6 +162,30 @@ class FoodRecommendationViewModel(
         }
     }
 
+    fun toggleCommentThumb(token: String, commentId: Int) {
+        val current = _uiState.value.currentFood ?: return
+        viewModelScope.launch {
+            val response = foodRepository.toggleCommentThumb(token = token, commentId = commentId)
+            if (response.isSuccess()) {
+                val thumbAdded = response.data == true
+                _uiState.update { state ->
+                    state.copy(
+                        comments = state.comments.map { comment ->
+                            if (comment.id == commentId) {
+                                comment.copy(
+                                    thumbed = thumbAdded,
+                                    thumb_count = if (thumbAdded) comment.thumb_count + 1 else comment.thumb_count - 1
+                                )
+                            } else {
+                                comment
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
     private suspend fun removeCurrentAndLoadNext(foodId: Int, message: String?) {
         val today = localStoreRepository.getTodayFoodIdOrNull()
         foodRepository.removeCachedFood(foodId = foodId, isRandom = isRandomMode)
