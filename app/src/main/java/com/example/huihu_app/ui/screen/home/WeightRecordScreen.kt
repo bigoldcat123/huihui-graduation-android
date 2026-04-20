@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
@@ -25,17 +23,11 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,15 +38,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huihu_app.data.model.ExerciseRecord
 import com.example.huihu_app.data.model.MealRecord
 import com.example.huihu_app.ui.AppViewModelProvider
+import com.example.huihu_app.ui.components.AddExerciseRecordButton
+import com.example.huihu_app.ui.components.AddMealRecordButton
 import com.example.huihu_app.ui.viewModel.WeightRecordViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeightRecordScreen(
     token: String,
@@ -62,131 +54,10 @@ fun WeightRecordScreen(
     viewModel: WeightRecordViewModel = viewModel(factory = AppViewModelProvider.FACTORY)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showExerciseSheet by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf(0) } // 0 = exercise, 1 = meal
-    val sheetState = rememberModalBottomSheetState()
 
     LaunchedEffect(token) {
         viewModel.loadData(token)
-    }
-
-    if (showExerciseSheet) {
-        ModalBottomSheet(
-            modifier = Modifier.imePadding(),
-            onDismissRequest = { showExerciseSheet = false },
-            sheetState = sheetState
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "添加运动记录",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Text(
-                    text = "选择运动类型",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                if (uiState.isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        uiState.exerciseTypes.forEach { exerciseType ->
-                            val isSelected = uiState.selectedExerciseTypeId == exerciseType.id
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        viewModel.selectExerciseType(exerciseType.id)
-                                    },
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (isSelected) {
-                                        MaterialTheme.colorScheme.primaryContainer
-                                    } else {
-                                        MaterialTheme.colorScheme.surface
-                                    }
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = exerciseType.name,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                    Text(
-                                        text = "MET: ${exerciseType.met_value}",
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = if (uiState.durationMinutes > 0) uiState.durationMinutes.toString() else "",
-                    onValueChange = {
-                        val minutes = it.filter { c -> c.isDigit() }.toIntOrNull() ?: 0
-                        viewModel.updateDuration(minutes)
-                    },
-                    label = { Text("运动时长 (分钟)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text(
-                    text = "体重: ${uiState.userWeight} kg",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                if (uiState.error != null) {
-                    Text(
-                        text = uiState.error ?: "",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        if (uiState.userWeight > 0) {
-                            viewModel.createExerciseRecord(token)
-                            showExerciseSheet = false
-                        }
-                    },
-                    enabled = uiState.selectedExerciseTypeId != null &&
-                            uiState.durationMinutes > 0 &&
-                            !uiState.isSaving &&
-                            uiState.userWeight > 0,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (uiState.isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(4.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text("创建记录")
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
     }
 
     Column(
@@ -338,13 +209,22 @@ fun WeightRecordScreen(
             }
         }
 
-        ExtendedFloatingActionButton(
-            onClick = { showExerciseSheet = true },
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null)
-            Text("添加运动记录")
+            AddExerciseRecordButton(
+                viewModel = viewModel,
+                token = token,
+                modifier = Modifier.weight(1f)
+            )
+            AddMealRecordButton(
+                onCreateRecord = { mealType, calories ->
+                    viewModel.createMealRecord(token, mealType, calories)
+                },
+                modifier = Modifier.weight(1f)
+            )
         }
+
         // Exercise records section - takes remaining space
         Column(modifier = Modifier.weight(1f)) {
             // Tab icons for switching between exercise and meal records
@@ -505,9 +385,9 @@ private fun MealRecordItem(record: MealRecord) {
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium
                     )
-                    record.note?.let {
+                    if (record.note != null) {
                         Text(
-                            text = it,
+                            text = record.note,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

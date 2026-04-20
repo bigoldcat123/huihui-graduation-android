@@ -1,8 +1,9 @@
 package com.example.huihu_app.data.repository
 
 import com.example.huihu_app.data.model.ApiResponse
-import com.example.huihu_app.data.model.MealRecord
 import com.example.huihu_app.data.model.CreateMealRecordRequest
+import com.example.huihu_app.data.model.CreateOuterMealRecordRequest
+import com.example.huihu_app.data.model.MealRecord
 import com.example.huihu_app.data.source.MealRecordSource
 
 class MealRecordRepository(
@@ -25,6 +26,22 @@ class MealRecordRepository(
             request = CreateMealRecordRequest(
                 food_id = foodId,
                 meal_type = mealType
+            )
+        )
+    }.getOrElse {
+        return ApiResponse.from(it)
+    }
+
+    suspend fun createOuterMealRecord(
+        token: String,
+        mealType: String,
+        calories: Double
+    ): ApiResponse<MealRecord> = runCatching {
+        mealRecordSource.createOuterMealRecord(
+            token = "Bearer $token",
+            request = CreateOuterMealRecordRequest(
+                meal_type = mealType,
+                calories = calories
             )
         )
     }.getOrElse {

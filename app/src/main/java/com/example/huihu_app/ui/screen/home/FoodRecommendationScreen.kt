@@ -106,18 +106,23 @@ fun FoodRecommendationScreen(
                                 enabled = !uiState.isLoading,
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            AddCommentButton(
-                                onSubmit = { comment -> viewModel.addComment(token, comment) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            AddToRecordButton(
-                                onAddToRecord = { mealType ->
-                                    uiState.currentFood?.id?.let { foodId ->
-                                        onAddToRecord(foodId, mealType)
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                AddCommentButton(
+                                    onSubmit = { comment -> viewModel.addComment(token, comment) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                AddToRecordButton(
+                                    onAddToRecord = { mealType ->
+                                        uiState.currentFood?.id?.let { foodId ->
+                                            onAddToRecord(foodId, mealType)
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         } else {
                             TodayFoodActionBar(
                                 onThatsIt = { viewModel.onThatsIt() },

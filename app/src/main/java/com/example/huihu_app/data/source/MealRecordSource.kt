@@ -1,8 +1,9 @@
 package com.example.huihu_app.data.source
 
 import com.example.huihu_app.data.model.ApiResponse
-import com.example.huihu_app.data.model.MealRecord
 import com.example.huihu_app.data.model.CreateMealRecordRequest
+import com.example.huihu_app.data.model.CreateOuterMealRecordRequest
+import com.example.huihu_app.data.model.MealRecord
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -16,5 +17,11 @@ interface MealRecordSource {
     suspend fun createMealRecord(
         @Header("Authorization") token: String,
         @Body request: CreateMealRecordRequest
+    ): ApiResponse<MealRecord>
+
+    @POST("/meal-record/outer")
+    suspend fun createOuterMealRecord(
+        @Header("Authorization") token: String,
+        @Body request: CreateOuterMealRecordRequest
     ): ApiResponse<MealRecord>
 }

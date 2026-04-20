@@ -148,4 +148,25 @@ class WeightRecordViewModel(
     fun updateCalorieGoal(token: String, goal: Double) {
         _uiState.update { it.copy(calorieGoal = goal) }
     }
+
+    fun createMealRecord(token: String, mealType: String, calories: Double) {
+        if (_uiState.value.isSaving) return
+
+        _uiState.update { it.copy(isSaving = true, error = null) }
+
+        viewModelScope.launch {
+            val response = mealRecordRepository.createOuterMealRecord(token, mealType, calories)
+            if (response.isSuccess()) {
+                loadData(token)
+                _uiState.update { it.copy(isSaving = false) }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        error = response.message
+                    )
+                }
+            }
+        }
+    }
 }

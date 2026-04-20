@@ -18,3 +18,9 @@ data class CreateMealRecordRequest(
     val food_id: Int,
     val meal_type: String
 )
+
+@Serializable
+data class CreateOuterMealRecordRequest(
+    val meal_type: String,
+    val calories: Double
+)
