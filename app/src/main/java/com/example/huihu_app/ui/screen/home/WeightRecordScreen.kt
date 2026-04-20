@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huihu_app.data.model.ExerciseRecord
+import com.example.huihu_app.data.model.MealRecord
 import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.viewModel.WeightRecordViewModel
 
@@ -61,6 +63,7 @@ fun WeightRecordScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showExerciseSheet by remember { mutableStateOf(false) }
+    var selectedTab by remember { mutableStateOf(0) } // 0 = exercise, 1 = meal
     val sheetState = rememberModalBottomSheetState()
 
     LaunchedEffect(token) {
@@ -344,35 +347,48 @@ fun WeightRecordScreen(
         }
         // Exercise records section - takes remaining space
         Column(modifier = Modifier.weight(1f)) {
-            if (uiState.exerciseRecords.isNotEmpty()) {
-                Text(
-                    text = "今日运动记录",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+            // Tab icons for switching between exercise and meal records
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.DirectionsRun,
+                    contentDescription = "运动记录",
+                    tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .clickable { selectedTab = 0 }
+                        .padding(4.dp)
                 )
-                // Add exercise record button above the list
+                Icon(
+                    imageVector = Icons.Default.Fastfood,
+                    contentDescription = "饮食记录",
+                    tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .clickable { selectedTab = 1 }
+                        .padding(4.dp)
+                )
+            }
 
-                // Scrollable exercise records list
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+            // Scrollable records list
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (selectedTab == 0) {
+                    // Exercise records
                     items(uiState.exerciseRecords) { record ->
                         ExerciseRecordItem(record = record)
                     }
-                    item {
-                        Spacer(Modifier.height(50.dp))
+                } else {
+                    // Meal records
+                    items(uiState.mealRecords) { record ->
+                        MealRecordItem(record = record)
                     }
                 }
-            } else {
-                // No records, still show the button
-//                ExtendedFloatingActionButton(
-//                    onClick = { showExerciseSheet = true },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null)
-//                    Text("添加运动记录")
-//                }
+                item {
+                    Spacer(Modifier.height(50.dp))
+                }
             }
         }
 
@@ -455,6 +471,54 @@ private fun ExerciseRecordItem(record: ExerciseRecord) {
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+private fun MealRecordItem(record: MealRecord) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Fastfood,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Column {
+                    Text(
+                        text = record.meal_type,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                    record.note?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            Text(
+                text = "+${record.total_calories.toInt()} kcal",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error
             )
         }
     }
