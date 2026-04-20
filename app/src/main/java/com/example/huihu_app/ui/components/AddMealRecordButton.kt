@@ -2,7 +2,6 @@ package com.example.huihu_app.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fastfood
@@ -78,86 +79,91 @@ fun AddMealRecordContent(
     var caloriesText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth(),
+            .heightIn(max = 400.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = "添加饮食记录",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
-        )
+        item {
+            Text(
+                text = "添加饮食记录",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
 
-        Text(
-            text = "选择餐次",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        item {
+            Text(
+                text = "选择餐次",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
-
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            mealTypes.forEach { mealType ->
-                val isSelected = selectedMealType == mealType
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { selectedMealType = mealType },
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isSelected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surface
-                        }
-                    )
-                ) {
-                    Text(
-                        text = when (mealType) {
-                            "breakfast" -> "早餐"
-                            "lunch" -> "午餐"
-                            "dinner" -> "晚餐"
-                            "snack" -> "零食"
-                            else -> mealType
-                        },
-                        modifier = Modifier.padding(16.dp),
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                    )
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                mealTypes.forEach { mealType ->
+                    val isSelected = selectedMealType == mealType
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { selectedMealType = mealType },
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surface
+                            }
+                        )
+                    ) {
+                        Text(
+                            text = when (mealType) {
+                                "breakfast" -> "早餐"
+                                "lunch" -> "午餐"
+                                "dinner" -> "晚餐"
+                                "snack" -> "零食"
+                                else -> mealType
+                            },
+                            modifier = Modifier.padding(12.dp),
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        item {
+            OutlinedTextField(
+                value = caloriesText,
+                onValueChange = { caloriesText = it.filter { c -> c.isDigit() || c == '.' } },
+                label = { Text("卡路里 (kcal)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        OutlinedTextField(
-            value = caloriesText,
-            onValueChange = { caloriesText = it.filter { c -> c.isDigit() || c == '.' } },
-            label = { Text("卡路里 (kcal)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                val calories = caloriesText.toDoubleOrNull() ?: 0.0
-                if (calories > 0 && selectedMealType.isNotEmpty()) {
-                    onCreateRecord(selectedMealType, calories)
-                }
-            },
-            enabled = caloriesText.toDoubleOrNull() != null && caloriesText.toDoubleOrNull()!! > 0,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.padding(4.dp),
-                    strokeWidth = 2.dp
-                )
-            } else {
+        item {
+            Button(
+                onClick = {
+                    val calories = caloriesText.toDoubleOrNull() ?: 0.0
+                    if (calories > 0 && selectedMealType.isNotEmpty()) {
+                        onCreateRecord(selectedMealType, calories)
+                    }
+                },
+                enabled = caloriesText.toDoubleOrNull() != null && caloriesText.toDoubleOrNull()!! > 0,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("创建记录")
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }

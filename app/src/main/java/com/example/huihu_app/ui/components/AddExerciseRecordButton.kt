@@ -2,13 +2,18 @@ package com.example.huihu_app.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
@@ -99,14 +104,28 @@ fun AddExerciseRecordContent(
         if (uiState.isLoading) {
             CircularProgressIndicator()
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                uiState.exerciseTypes.forEach { exerciseType ->
-                    val isSelected = uiState.selectedExerciseTypeId == exerciseType.id
-                    ExerciseTypeCard(
-                        exerciseType = exerciseType,
-                        isSelected = isSelected,
-                        onClick = { viewModel.selectExerciseType(exerciseType.id) }
-                    )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                uiState.exerciseTypes.chunked(2).forEach { rowTypes ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        rowTypes.forEach { exerciseType ->
+                            val isSelected = uiState.selectedExerciseTypeId == exerciseType.id
+                            ExerciseTypeCard(
+                                exerciseType = exerciseType,
+                                isSelected = isSelected,
+                                onClick = { viewModel.selectExerciseType(exerciseType.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        if (rowTypes.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
@@ -163,16 +182,16 @@ fun AddExerciseRecordContent(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ExerciseTypeCard(
     exerciseType: ExerciseType,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
                 MaterialTheme.colorScheme.primaryContainer
@@ -183,9 +202,10 @@ private fun ExerciseTypeCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = androidx.compose.ui.Alignment.Bottom
         ) {
             Text(
                 text = exerciseType.name,
@@ -193,7 +213,8 @@ private fun ExerciseTypeCard(
             )
             Text(
                 text = "MET: ${exerciseType.met_value}",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall
             )
         }
     }
