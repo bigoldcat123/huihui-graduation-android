@@ -142,7 +142,8 @@ initializer {
                     container().exerciseTypeRepository,
                     container().exerciseRecordRepository,
                     container().userRepository,
-                    container().topicRepository
+                    container().topicRepository,
+                    container().imageRepository
                 )
             }
         }

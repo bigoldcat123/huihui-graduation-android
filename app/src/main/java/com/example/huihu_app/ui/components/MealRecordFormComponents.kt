@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -198,7 +199,8 @@ fun ImagePickerCard(onClick: () -> Unit) {
 @Composable
 fun ImagePreviewSection(
     imageUri: Uri,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    recognizedCalories: String? = null
 ) {
     Box(
         modifier = Modifier
@@ -222,6 +224,22 @@ fun ImagePreviewSection(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
+        if (recognizedCalories != null && recognizedCalories.isNotEmpty()) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp),
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
+            ) {
+                Text(
+                    text = "${recognizedCalories} 千卡",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
     }
 }
 
@@ -235,10 +253,11 @@ fun ImageRecognitionSection(
     caloriesText: String,
     onCaloriesChange: (String) -> Unit,
     onPickImage: () -> Unit,
-    onRemoveImage: () -> Unit
+    onRemoveImage: () -> Unit,
+    recognizedCalories: String? = null
 ) {
     if (selectedImageUri != null) {
-        ImagePreviewSection(imageUri = selectedImageUri, onRemove = onRemoveImage)
+        ImagePreviewSection(imageUri = selectedImageUri, onRemove = onRemoveImage, recognizedCalories = recognizedCalories)
     } else {
         ImagePickerCard(onClick = onPickImage)
     }

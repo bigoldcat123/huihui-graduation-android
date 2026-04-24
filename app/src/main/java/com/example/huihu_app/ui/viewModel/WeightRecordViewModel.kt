@@ -7,6 +7,7 @@ import com.example.huihu_app.data.model.ExerciseType
 import com.example.huihu_app.data.repository.CalorieGoalRepository
 import com.example.huihu_app.data.repository.ExerciseRecordRepository
 import com.example.huihu_app.data.repository.ExerciseTypeRepository
+import com.example.huihu_app.data.repository.ImageRepository
 import com.example.huihu_app.data.repository.MealRecordRepository
 import com.example.huihu_app.data.repository.TopicRepository
 import com.example.huihu_app.data.repository.UserRepository
@@ -36,7 +37,8 @@ class WeightRecordViewModel(
     private val exerciseTypeRepository: ExerciseTypeRepository,
     private val exerciseRecordRepository: ExerciseRecordRepository,
     private val userRepository: UserRepository,
-    private val topicRepository: TopicRepository
+    private val topicRepository: TopicRepository,
+    val imageRepository: ImageRepository
 ) : ViewModel() {
     val topic: TopicRepository = topicRepository
     private val _uiState = MutableStateFlow(WeightRecordUiState())

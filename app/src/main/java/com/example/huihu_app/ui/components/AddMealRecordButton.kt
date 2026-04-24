@@ -35,11 +35,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.huihu_app.data.repository.ImageRepository
 import com.example.huihu_app.data.repository.MealRecordRepository
 import com.example.huihu_app.data.repository.TopicRepository
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import java.io.File
+import java.io.FileOutputStream
+
+private fun uriToTempFile(cacheDir: File, contentResolver: android.content.ContentResolver, uri: Uri): File? {
+    return try {
+        val inputStream = contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("image_", ".jpg", cacheDir)
+        FileOutputStream(tempFile).use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+        inputStream.close()
+        tempFile
+    } catch (e: Exception) {
+        null
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +62,7 @@ fun AddMealRecordButton(
     onCreateRecord: (String, Double) -> Unit,
     topicRepository: TopicRepository? = null,
     mealRecordRepository: MealRecordRepository? = null,
+    imageRepository: ImageRepository? = null,
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -73,7 +89,8 @@ fun AddMealRecordButton(
                     showSheet = false
                 },
                 topicRepository = topicRepository,
-                mealRecordRepository = mealRecordRepository
+                mealRecordRepository = mealRecordRepository,
+                imageRepository = imageRepository
             )
         }
     }
@@ -84,7 +101,8 @@ fun AddMealRecordContent(
     onDismiss: () -> Unit,
     onCreateRecord: (String, Double) -> Unit,
     topicRepository: TopicRepository? = null,
-    mealRecordRepository: MealRecordRepository? = null
+    mealRecordRepository: MealRecordRepository? = null,
+    imageRepository: ImageRepository? = null
 ) {
     var inputMode by remember { mutableStateOf("manual") }
     var selectedMealType by remember { mutableStateOf("lunch") }
@@ -105,31 +123,24 @@ fun AddMealRecordContent(
             isRecognizing = true
             errorMsg = null
             scope.launch {
-                val part = uriToPart(context.contentResolver, uri)
-                if (part == null) {
-                    errorMsg = "读取图片失败"
-                    isRecognizing = false
-                    return@launch
-                }
-                val response = topicRepository?.uploadImages(listOf(part))
-                if (response?.isSuccess() == true) {
-                    val imageUrl = response.data?.firstOrNull()
-                    if (imageUrl != null) {
-                        val encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8.toString())
-                        try {
-                            val recognizeResponse = mealRecordRepository?.recognizeFood("$encodedUrl")
-                            if (recognizeResponse?.isSuccess() == true) {
-                                recognizedKcal = recognizeResponse.data
-                                caloriesText = recognizedKcal?.toInt()?.toString() ?: ""
-                            } else {
-                                errorMsg = recognizeResponse?.message ?: "识别失败"
-                            }
-                        } catch (e: Exception) {
-                            errorMsg = e.message ?: "识别失败"
-                        }
+                try {
+                    val tempFile = uriToTempFile(context.cacheDir, context.contentResolver, uri)
+                    android.util.Log.d("AddMealRecord", "tempFile: $tempFile, exists: ${tempFile?.exists()}, size: ${tempFile?.length()}")
+                    if (tempFile == null) {
+                        errorMsg = "读取图片失败"
+                        isRecognizing = false
+                        return@launch
                     }
-                } else {
-                    errorMsg = response?.message ?: "上传图片失败"
+                    val response = imageRepository?.searchImage(tempFile)
+                    android.util.Log.d("AddMealRecord", "response: $response")
+                    if (response?.isSuccess() == true) {
+                        recognizedKcal = response.data?.toDouble()
+                        caloriesText = response.data?.toString() ?: ""
+                    } else {
+                        errorMsg = response?.message ?: "识别失败"
+                    }
+                } catch (e: Exception) {
+                    errorMsg = e.message ?: "识别失败"
                 }
                 isRecognizing = false
             }
@@ -179,7 +190,8 @@ fun AddMealRecordContent(
                     selectedImageUri = null
                     recognizedKcal = null
                     caloriesText = ""
-                }
+                },
+                recognizedCalories = recognizedKcal?.toInt()?.toString()
             )
         } }
 

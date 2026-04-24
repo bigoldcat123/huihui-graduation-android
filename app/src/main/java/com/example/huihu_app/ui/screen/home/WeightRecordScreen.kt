@@ -106,7 +106,8 @@ private fun ActionButtonsRow(
             modifier = Modifier.weight(1f),
             onCreateRecord = onCreateMealRecord,
             topicRepository = viewModel.topic,
-            mealRecordRepository = viewModel.mealRecordRepository
+            mealRecordRepository = viewModel.mealRecordRepository,
+            imageRepository = viewModel.imageRepository
         )
     }
 }
