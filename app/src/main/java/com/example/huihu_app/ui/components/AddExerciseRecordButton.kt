@@ -50,7 +50,7 @@ fun AddExerciseRecordButton(
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ExtendedFloatingActionButton(
         onClick = { showSheet = true },
