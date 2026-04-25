@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huihu_app.ui.AppViewModelProvider
 import com.example.huihu_app.ui.components.AddExerciseRecordButton
+import com.example.huihu_app.ui.components.ExerciseRecordState
 import com.example.huihu_app.ui.components.AddMealRecordButton
 import com.example.huihu_app.ui.components.CalorieSummaryCard
 import com.example.huihu_app.ui.components.RecordListSection
@@ -93,21 +94,32 @@ private fun ActionButtonsRow(
     viewModel: WeightRecordViewModel,
     token: String
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         AddExerciseRecordButton(
-            viewModel = viewModel,
-            token = token,
+            state = ExerciseRecordState(
+                isLoading = uiState.isLoading,
+                exerciseTypes = uiState.exerciseTypes,
+                selectedExerciseTypeId = uiState.selectedExerciseTypeId,
+                durationMinutes = uiState.durationMinutes,
+                userWeight = uiState.userWeight,
+                error = uiState.error,
+                isSaving = uiState.isSaving
+            ),
+            onSelectExerciseType = { viewModel.selectExerciseType(it) },
+            onUpdateDuration = { viewModel.updateDuration(it) },
+            onCreateExerciseRecord = { viewModel.createExerciseRecord(token) },
             modifier = Modifier.weight(1f)
         )
         AddMealRecordButton(
             modifier = Modifier.weight(1f),
             onCreateRecord = onCreateMealRecord,
-            topicRepository = viewModel.topic,
-            mealRecordRepository = viewModel.mealRecordRepository,
-            imageRepository = viewModel.imageRepository
+            onRecognizeImage = { file, callback ->
+                viewModel.recognizeImage(file, callback)
+            }
         )
     }
 }

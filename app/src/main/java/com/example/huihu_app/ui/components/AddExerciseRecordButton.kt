@@ -2,18 +2,15 @@ package com.example.huihu_app.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
@@ -30,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,13 +36,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.huihu_app.data.model.ExerciseType
-import com.example.huihu_app.ui.viewModel.WeightRecordViewModel
+
+data class ExerciseRecordState(
+    val isLoading: Boolean = false,
+    val exerciseTypes: List<ExerciseType> = emptyList(),
+    val selectedExerciseTypeId: Int? = null,
+    val durationMinutes: Int = 0,
+    val userWeight: Double = 0.0,
+    val error: String? = null,
+    val isSaving: Boolean = false
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExerciseRecordButton(
-    viewModel: WeightRecordViewModel,
-    token: String,
+    state: ExerciseRecordState,
+    onSelectExerciseType: (Int) -> Unit,
+    onUpdateDuration: (Int) -> Unit,
+    onCreateExerciseRecord: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -67,8 +74,10 @@ fun AddExerciseRecordButton(
             sheetState = sheetState
         ) {
             AddExerciseRecordContent(
-                viewModel = viewModel,
-                token = token,
+                state = state,
+                onSelectExerciseType = onSelectExerciseType,
+                onUpdateDuration = onUpdateDuration,
+                onCreateExerciseRecord = onCreateExerciseRecord,
                 onDismiss = { showSheet = false }
             )
         }
@@ -77,16 +86,15 @@ fun AddExerciseRecordButton(
 
 @Composable
 fun AddExerciseRecordContent(
-    viewModel: WeightRecordViewModel,
-    token: String,
+    state: ExerciseRecordState,
+    onSelectExerciseType: (Int) -> Unit,
+    onUpdateDuration: (Int) -> Unit,
+    onCreateExerciseRecord: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     Column(
         modifier = Modifier
             .padding(16.dp)
-//            .height(600.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -102,24 +110,24 @@ fun AddExerciseRecordContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        if (uiState.isLoading) {
+        if (state.isLoading) {
             CircularProgressIndicator()
         } else {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                uiState.exerciseTypes.chunked(2).forEach { rowTypes ->
+                state.exerciseTypes.chunked(2).forEach { rowTypes ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         rowTypes.forEach { exerciseType ->
-                            val isSelected = uiState.selectedExerciseTypeId == exerciseType.id
+                            val isSelected = state.selectedExerciseTypeId == exerciseType.id
                             ExerciseTypeCard(
                                 exerciseType = exerciseType,
                                 isSelected = isSelected,
-                                onClick = { viewModel.selectExerciseType(exerciseType.id) },
+                                onClick = { onSelectExerciseType(exerciseType.id) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -134,10 +142,10 @@ fun AddExerciseRecordContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = if (uiState.durationMinutes > 0) uiState.durationMinutes.toString() else "",
+            value = if (state.durationMinutes > 0) state.durationMinutes.toString() else "",
             onValueChange = {
                 val minutes = it.filter { c -> c.isDigit() }.toIntOrNull() ?: 0
-                viewModel.updateDuration(minutes)
+                onUpdateDuration(minutes)
             },
             label = { Text("运动时长 (分钟)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -146,30 +154,30 @@ fun AddExerciseRecordContent(
         )
 
         Text(
-            text = "体重: ${uiState.userWeight} kg",
+            text = "体重: ${state.userWeight} kg",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        if (uiState.error != null) {
+        if (state.error != null) {
             Text(
-                text = uiState.error ?: "",
+                text = state.error,
                 color = MaterialTheme.colorScheme.error
             )
         }
 
         Button(
             onClick = {
-                viewModel.createExerciseRecord(token)
+                onCreateExerciseRecord()
                 onDismiss()
             },
-            enabled = uiState.selectedExerciseTypeId != null &&
-                    uiState.durationMinutes > 0 &&
-                    !uiState.isSaving &&
-                    uiState.userWeight > 0,
+            enabled = state.selectedExerciseTypeId != null &&
+                    state.durationMinutes > 0 &&
+                    !state.isSaving &&
+                    state.userWeight > 0,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (uiState.isSaving) {
+            if (state.isSaving) {
                 CircularProgressIndicator(
                     modifier = Modifier.padding(4.dp),
                     strokeWidth = 2.dp

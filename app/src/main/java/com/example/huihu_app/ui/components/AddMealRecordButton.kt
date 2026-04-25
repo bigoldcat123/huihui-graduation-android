@@ -36,8 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.huihu_app.data.repository.ImageRepository
-import com.example.huihu_app.data.repository.MealRecordRepository
-import com.example.huihu_app.data.repository.TopicRepository
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -60,9 +58,7 @@ private fun uriToTempFile(cacheDir: File, contentResolver: android.content.Conte
 @Composable
 fun AddMealRecordButton(
     onCreateRecord: (String, Double) -> Unit,
-    topicRepository: TopicRepository? = null,
-    mealRecordRepository: MealRecordRepository? = null,
-    imageRepository: ImageRepository? = null,
+    onRecognizeImage: (File, (Result<Double>) -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -88,9 +84,7 @@ fun AddMealRecordButton(
                     onCreateRecord(mealType, calories)
                     showSheet = false
                 },
-                topicRepository = topicRepository,
-                mealRecordRepository = mealRecordRepository,
-                imageRepository = imageRepository
+                onRecognizeImage = onRecognizeImage
             )
         }
     }
@@ -100,9 +94,7 @@ fun AddMealRecordButton(
 fun AddMealRecordContent(
     onDismiss: () -> Unit,
     onCreateRecord: (String, Double) -> Unit,
-    topicRepository: TopicRepository? = null,
-    mealRecordRepository: MealRecordRepository? = null,
-    imageRepository: ImageRepository? = null
+    onRecognizeImage: (File, (Result<Double>) -> Unit) -> Unit
 ) {
     var inputMode by remember { mutableStateOf("manual") }
     var selectedMealType by remember { mutableStateOf("lunch") }
@@ -125,24 +117,27 @@ fun AddMealRecordContent(
             scope.launch {
                 try {
                     val tempFile = uriToTempFile(context.cacheDir, context.contentResolver, uri)
-                    android.util.Log.d("AddMealRecord", "tempFile: $tempFile, exists: ${tempFile?.exists()}, size: ${tempFile?.length()}")
                     if (tempFile == null) {
                         errorMsg = "读取图片失败"
                         isRecognizing = false
                         return@launch
                     }
-                    val response = imageRepository?.searchImage(tempFile)
-                    android.util.Log.d("AddMealRecord", "response: $response")
-                    if (response?.isSuccess() == true) {
-                        recognizedKcal = response.data?.toDouble()
-                        caloriesText = response.data?.toString() ?: ""
-                    } else {
-                        errorMsg = response?.message ?: "识别失败"
+                    onRecognizeImage(tempFile) { result ->
+                        result.fold(
+                            onSuccess = { kcal ->
+                                recognizedKcal = kcal
+                                caloriesText = kcal.toString()
+                            },
+                            onFailure = { e ->
+                                errorMsg = e.message ?: "识别失败"
+                            }
+                        )
+                        isRecognizing = false
                     }
                 } catch (e: Exception) {
                     errorMsg = e.message ?: "识别失败"
+                    isRecognizing = false
                 }
-                isRecognizing = false
             }
         }
     }

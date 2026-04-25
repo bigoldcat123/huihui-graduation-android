@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 data class WeightRecordUiState(
     val calorieGoal: Double? = null,
@@ -171,6 +172,17 @@ class WeightRecordViewModel(
                         error = response.message
                     )
                 }
+            }
+        }
+    }
+
+    fun recognizeImage(imageFile: File, callback: (Result<Double>) -> Unit) {
+        viewModelScope.launch {
+            val response = imageRepository.searchImage(imageFile)
+            if (response.isSuccess()) {
+                callback(Result.success(response.data?.toDouble() ?: 0.0))
+            } else {
+                callback(Result.failure(Exception(response.message ?: "识别失败")))
             }
         }
     }
