@@ -1,6 +1,7 @@
 package com.example.huihu_app.data.repository
 
 import com.example.huihu_app.data.model.ApiResponse
+import com.example.huihu_app.data.model.ExternalSearchResponse
 import com.example.huihu_app.data.source.ImageSource
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -24,7 +25,7 @@ class ImageRepository(
         return ApiResponse.from(it)
     }
 
-    suspend fun searchImage(imageFile: File): ApiResponse<Int> = runCatching {
+    suspend fun searchImage(imageFile: File): ApiResponse<ExternalSearchResponse> = runCatching {
         val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestBody)
         imageSource.searchImage(imagePart)

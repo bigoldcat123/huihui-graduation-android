@@ -1,6 +1,7 @@
 package com.example.huihu_app.data.source
 
 import com.example.huihu_app.data.model.ApiResponse
+import com.example.huihu_app.data.model.ExternalSearchResponse
 import okhttp3.MultipartBody
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -22,5 +23,5 @@ interface ImageSource {
     @POST("/image")
     suspend fun searchImage(
         @Part image: MultipartBody.Part
-    ): ApiResponse<Int>
+    ): ApiResponse<ExternalSearchResponse>
 }

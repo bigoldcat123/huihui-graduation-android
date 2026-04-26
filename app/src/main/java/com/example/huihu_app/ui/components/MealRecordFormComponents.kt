@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -200,7 +201,8 @@ fun ImagePickerCard(onClick: () -> Unit) {
 fun ImagePreviewSection(
     imageUri: Uri,
     onRemove: () -> Unit,
-    recognizedCalories: String? = null
+    recognizedCalories: String? = null,
+    recognizedFoodName: String? = null
 ) {
     Box(
         modifier = Modifier
@@ -232,12 +234,23 @@ fun ImagePreviewSection(
                 shape = RoundedCornerShape(20.dp),
                 color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
             ) {
-                Text(
-                    text = "${recognizedCalories} 千卡",
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    if (recognizedFoodName != null) {
+                        Text(
+                            text = recognizedFoodName,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                    Text(
+                        text = "${recognizedCalories} 千卡",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    )
+                }
             }
         }
     }
@@ -254,10 +267,11 @@ fun ImageRecognitionSection(
     onCaloriesChange: (String) -> Unit,
     onPickImage: () -> Unit,
     onRemoveImage: () -> Unit,
-    recognizedCalories: String? = null
+    recognizedCalories: String? = null,
+    recognizedFoodName: String? = null
 ) {
     if (selectedImageUri != null) {
-        ImagePreviewSection(imageUri = selectedImageUri, onRemove = onRemoveImage, recognizedCalories = recognizedCalories)
+        ImagePreviewSection(imageUri = selectedImageUri, onRemove = onRemoveImage, recognizedCalories = recognizedCalories, recognizedFoodName = recognizedFoodName)
     } else {
         ImagePickerCard(onClick = onPickImage)
     }

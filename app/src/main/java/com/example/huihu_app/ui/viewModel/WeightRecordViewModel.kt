@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.huihu_app.data.model.ExerciseRecord
 import com.example.huihu_app.data.model.ExerciseType
+import com.example.huihu_app.data.model.ExternalSearchResponse
+import com.example.huihu_app.data.model.RecognitionResult
 import com.example.huihu_app.data.repository.CalorieGoalRepository
 import com.example.huihu_app.data.repository.ExerciseRecordRepository
 import com.example.huihu_app.data.repository.ExerciseTypeRepository
@@ -176,11 +178,16 @@ class WeightRecordViewModel(
         }
     }
 
-    fun recognizeImage(imageFile: File, callback: (Result<Double>) -> Unit) {
+    fun recognizeImage(imageFile: File, callback: (Result<RecognitionResult>) -> Unit) {
         viewModelScope.launch {
             val response = imageRepository.searchImage(imageFile)
             if (response.isSuccess()) {
-                callback(Result.success(response.data?.toDouble() ?: 0.0))
+                val data = response.data
+                val result = RecognitionResult(
+                    calories = data?.cal?.toDouble() ?: 0.0,
+                    foodName = data?.food_name ?: ""
+                )
+                callback(Result.success(result))
             } else {
                 callback(Result.failure(Exception(response.message ?: "识别失败")))
             }

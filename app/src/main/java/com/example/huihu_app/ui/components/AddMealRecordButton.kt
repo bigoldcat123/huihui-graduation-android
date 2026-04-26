@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.huihu_app.data.model.RecognitionResult
 import com.example.huihu_app.data.repository.ImageRepository
 import kotlinx.coroutines.launch
 import java.io.File
@@ -58,7 +59,7 @@ private fun uriToTempFile(cacheDir: File, contentResolver: android.content.Conte
 @Composable
 fun AddMealRecordButton(
     onCreateRecord: (String, Double) -> Unit,
-    onRecognizeImage: (File, (Result<Double>) -> Unit) -> Unit,
+    onRecognizeImage: (File, (Result<RecognitionResult>) -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -94,7 +95,7 @@ fun AddMealRecordButton(
 fun AddMealRecordContent(
     onDismiss: () -> Unit,
     onCreateRecord: (String, Double) -> Unit,
-    onRecognizeImage: (File, (Result<Double>) -> Unit) -> Unit
+    onRecognizeImage: (File, (Result<RecognitionResult>) -> Unit) -> Unit
 ) {
     var inputMode by remember { mutableStateOf("manual") }
     var selectedMealType by remember { mutableStateOf("lunch") }
@@ -102,6 +103,7 @@ fun AddMealRecordContent(
     var isRecognizing by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var recognizedKcal by remember { mutableStateOf<Double?>(null) }
+    var recognizedFoodName by remember { mutableStateOf<String?>(null) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
@@ -124,9 +126,10 @@ fun AddMealRecordContent(
                     }
                     onRecognizeImage(tempFile) { result ->
                         result.fold(
-                            onSuccess = { kcal ->
-                                recognizedKcal = kcal
-                                caloriesText = kcal.toString()
+                            onSuccess = { recognitionResult ->
+                                recognizedKcal = recognitionResult.calories
+                                recognizedFoodName = recognitionResult.foodName
+                                caloriesText = recognitionResult.calories.toString()
                             },
                             onFailure = { e ->
                                 errorMsg = e.message ?: "识别失败"
@@ -184,9 +187,11 @@ fun AddMealRecordContent(
                 onRemoveImage = {
                     selectedImageUri = null
                     recognizedKcal = null
+                    recognizedFoodName = null
                     caloriesText = ""
                 },
-                recognizedCalories = recognizedKcal?.toInt()?.toString()
+                recognizedCalories = recognizedKcal?.toInt()?.toString(),
+                recognizedFoodName = recognizedFoodName
             )
         } }
 
